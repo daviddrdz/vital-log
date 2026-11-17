@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew assembleDebug:*)",
+      "Bash(./gradlew test:*)",
+      "Bash(./gradlew lint:*)",
+      "Bash(./gradlew clean:*)",
+      "Bash(python3 .claude/skills/gerontological-ui-auditor/scripts/audit_ui.py:*)",
+      "Bash(python3 .claude/skills/gerontological-ui-auditor/scripts/contrast.py:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/audit-ui-on-edit.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

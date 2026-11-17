@@ -2,9 +2,12 @@
 
 Fuente de verdad del proyecto. Toda decisión de código, UI o arquitectura debe respetar este documento. Si una petición lo contradice, se señala el conflicto antes de implementar.
 
+**Plan de trabajo:** @docs/IMPLEMENTATION_PLAN.md (6 hitos; detalle de archivos, pruebas y demos por hito).
+**Estado actual:** Hito 1 completo → siguiente: Hito 2 (control numérico visual). Actualizar esta línea al cerrar cada hito.
+
 ## 1. Contexto del producto
 
-**VitalLog** es una app Android nativa para **adultos mayores con diabetes tipo 2 e hipertensión**. Permite registrar glucosa y presión arterial, y recordar la toma de medicamentos. El diseño se rige por **accesibilidad gerontológica**: baja agudeza visual, temblor o menor precisión motora, menor familiaridad con interfaces complejas.
+**VitalLog** es una app Android nativa para **adultos mayores con diabetes tipo 2 e hipertensión**. Permite registrar glucosa y presión arterial, y recordar la toma de medicamentos y las citas médicas. El diseño se rige por **accesibilidad gerontológica**: baja agudeza visual, temblor o menor precisión motora, menor familiaridad con interfaces complejas.
 
 Principio rector: **si un adulto mayor puede equivocarse con un control, el control está mal diseñado.**
 
@@ -27,12 +30,11 @@ Dependencias nuevas se agregan siempre vía `libs.versions.toml`, nunca con coor
 
 ### 3.1 Captura de datos sin teclado
 - **PROHIBIDO** usar `EditText` (o cualquier control que abra el teclado virtual) para capturar signos vitales.
-- Usar **exclusivamente** controles numéricos visuales:
-  - Botones **+ / −** de gran tamaño con el valor centrado en tipografía grande, y/o
-  - Diales rotativos / `NumberPicker` estilizado con valores grandes.
+- Usar **exclusivamente** botones **+ / −** de gran tamaño con el valor centrado en tipografía grande. El dial rotativo y el `NumberPicker` están **descartados**: con temblor son menos precisos que los botones.
 - Mantener pulsado +/− acelera el incremento (p. ej. 1 → 5 → 10) para evitar cientos de toques.
 - Cada control inicia en un **valor por defecto razonable** (último valor registrado o un valor típico), no en 0.
 - Los límites del control coinciden con los rangos del Gestor Analítico (§4.2): es imposible seleccionar un valor fuera de rango.
+- Los datos que **no** son signos vitales (nombre de un medicamento, médico o lugar de una cita) sí pueden usar teclado.
 
 ### 3.2 Navegación 100% plana
 - **Sin** menús hamburguesa, `NavigationDrawer`, menús de desbordamiento (⋮), submenús ni pestañas anidadas.
@@ -46,11 +48,8 @@ Dependencias nuevas se agregan siempre vía `libs.versions.toml`, nunca con coor
 - Siempre `sp` para texto (respeta la escala de fuente del sistema); el layout debe funcionar con escala 1.3×–2.0×.
 - Contraste **WCAG AAA: ≥ 7:1** para todo texto e iconos informativos, **oscuro sobre fondo claro sólido** (tema claro fijo, sin `DayNight`), sin transparencias ni degradados detrás de texto. Colores definidos en `res/values/colors.xml`; no usar colores literales en layouts.
 - No transmitir información solo con color (acompañar con texto o icono).
-- Áreas táctiles **mínimo 60dp × 60dp, ideal ≥ 64dp**, con separación ≥ 12dp entre objetivos.
-
-### 3.6 Auditoría obligatoria
-Al crear o modificar layouts, estilos, temas, drawables o vistas Java de UI, aplicar la skill `.claude/skills/gerontological-ui-auditor/` (script `audit_ui.py` + revisión manual) antes de dar la pantalla por terminada.
 - Iconos siempre acompañados de etiqueta de texto; todo control con `contentDescription` para TalkBack.
+- Áreas táctiles **mínimo 60dp × 60dp, ideal ≥ 64dp**, con separación ≥ 12dp entre objetivos.
 
 ### 3.4 Retroalimentación obligatoria al guardar
 Todo guardado exitoso dispara **ambos**:
@@ -63,6 +62,9 @@ Los errores de validación también tienen feedback visual + auditivo (tono dist
 - Textos de UI en **español**, en `res/values/strings.xml` (nunca literales en código o XML).
 - Frases cortas, en segunda persona, sin abreviaturas ambiguas (escribir "Presión arterial", no "PA").
 
+### 3.6 Auditoría obligatoria
+Al crear o modificar layouts, estilos, temas, drawables o vistas Java de UI, aplicar la skill `.claude/skills/gerontological-ui-auditor/` (script `audit_ui.py` + contraste + revisión manual + prueba con fuente 2.0×) antes de dar la pantalla por terminada. Un hook (`.claude/settings.json`) ejecuta `audit_ui.py` automáticamente tras cada edición de `res/` o de código de UI; sus errores se corrigen antes de continuar.
+
 ## 4. Arquitectura de módulos
 
 Patrón por capas: **UI (Activity/Fragment + ViewModel) → Repositorio → (Gestor Analítico) → Room**.
@@ -71,7 +73,7 @@ Patrón por capas: **UI (Activity/Fragment + ViewModel) → Repositorio → (Ges
 com.davidrdz.vitallog
 ├── data/            # Capa de Persistencia Local
 │   ├── db/          #   AppDatabase, DAOs
-│   ├── entity/      #   GlucoseReading, BloodPressureReading, Medication, DoseLog
+│   ├── entity/      #   GlucoseReading, BloodPressureReading, Medication, DoseLog, Appointment
 │   └── repository/  #   Repositorios (único punto de acceso a datos desde UI)
 ├── analytics/       # Gestor de Procesamiento Analítico (validación de rangos)
 ├── alarms/          # Orquestador de Tareas y Alarmas
@@ -96,20 +98,22 @@ Rangos biológicamente posibles (límites de captura):
 | Presión sistólica (mmHg) | 60 | 260 | sistólica > diastólica |
 | Presión diastólica (mmHg) | 30 | 160 | diferencia (presión de pulso) ≥ 10 |
 
-- Valores fuera de rango → rechazo con mensaje claro, no se guardan.
-- Opcionalmente clasifica lecturas válidas (normal / elevada / alta) para mostrarlas con texto + color; esta clasificación es informativa, no diagnóstica.
+- Valores imposibles (fuera de rango o incoherentes) → rechazo con mensaje claro, no se guardan.
+- **Un valor posible nunca se bloquea**, aunque sea alarmante (p. ej. glucosa 320): se muestra un aviso en lenguaje llano ("Este número es muy alto. Si te sientes mal, llama a tu médico.") y el usuario puede guardarlo igual.
+- Clasifica lecturas válidas (baja / normal / elevada / alta) para mostrarlas con texto + icono + color. La clasificación es **informativa, no diagnóstica**: nunca dar consejos médicos ni indicar dosis; como máximo, sugerir consultar al médico.
 - Los rangos viven en constantes de una sola clase (p. ej. `VitalRanges`) y los reutilizan tanto el validador como los controles de UI.
 
 ### 4.3 Orquestador de Tareas y Alarmas
 - Programa recordatorios con `AlarmManager` **exacto** (`setExactAndAllowWhileIdle` o `setAlarmClock`).
 - Al dispararse: `BroadcastReceiver` → notificación de alta prioridad (categoría `CATEGORY_ALARM`) con **Full-Screen Intent** → `Activity` modal que enciende y desbloquea la pantalla (`setShowWhenLocked(true)`, `setTurnScreenOn(true)`).
-- La Activity modal muestra el medicamento/dosis y **exactamente 2 botones binarios** grandes:
-  - **"Ya lo tomé"** → registra la toma (`DoseLog`) con feedback visual + auditivo y cierra.
-  - **"Recordar más tarde"** → reprograma la alarma (posponer, p. ej. 10 min) y cierra.
-- Reprogramar todas las alarmas tras reinicio (`RECEIVE_BOOT_COMPLETED`) y cambio de hora/zona.
+- La Activity modal muestra el medicamento/dosis (o la cita) y **exactamente 2 botones binarios** grandes:
+  - Medicamento: **"Ya lo tomé"** → registra la toma (`DoseLog`) con feedback visual + auditivo y cierra.
+  - Cita: **"Entendido"** → cierra (no hay nada que registrar).
+  - En ambos casos: **"Recordar más tarde"** → reprograma una alarma única (posponer 10 min, sin alterar la alarma diaria) y cierra.
+- Reprogramar todas las alarmas tras reinicio (`RECEIVE_BOOT_COMPLETED`), cambio de hora/zona y actualización de la app.
 - Permisos requeridos: `SCHEDULE_EXACT_ALARM` (o `USE_EXACT_ALARM`), `USE_FULL_SCREEN_INTENT`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK`. Verificar en tiempo de ejecución `AlarmManager.canScheduleExactAlarms()` y `NotificationManager.canUseFullScreenIntent()` (API 34+), guiando al usuario con una pantalla simple si faltan.
 
-## 5. Comandos
+## 5. Comandos y definición de "terminado"
 
 ```bash
 ./gradlew assembleDebug          # Compilar APK de depuración
@@ -118,14 +122,21 @@ Rangos biológicamente posibles (límites de captura):
 ./gradlew connectedAndroidTest   # Pruebas instrumentadas (requiere dispositivo)
 ./gradlew lint                   # Análisis estático de Android Lint
 ./gradlew clean                  # Limpiar artefactos de compilación
+python3 .claude/skills/gerontological-ui-auditor/scripts/audit_ui.py app/src/main/res app/src/main/java
 ```
 
-Antes de dar una tarea por terminada: `./gradlew assembleDebug` y `./gradlew test` deben pasar.
+**Tarea terminada:** `./gradlew assembleDebug test lint` en verde y `audit_ui.py` sin `ERROR`.
+
+**Hito terminado** (además de lo anterior): `contrast.py` ≥ 7:1 para cada par de colores nuevo, demo en emulador (API 34+) con fuente 1.0× y 2.0×, un commit por hito y la línea "Estado actual" de este archivo actualizada.
+
+**Honestidad al verificar:** nunca declarar algo "verificado", "compilado" o "probado" sin haber ejecutado el comando. Si Gradle, el emulador o un dispositivo no están disponibles, decirlo explícitamente y listar qué quedó sin comprobar.
+
+**Commits:** Conventional Commits (`feat(ui): …`, `test(ui): …`, `fix(alarms): …`, `docs: …`), en inglés, en imperativo.
 
 ## 6. Convenciones de código limpio (Java)
 
 - **Nombres:** clases `PascalCase`, métodos/variables `camelCase`, constantes `UPPER_SNAKE_CASE`. Identificadores en inglés; textos de UI en español vía recursos.
-- **Layouts/recursos:** `activity_*.xml`, `item_*.xml`, `view_*.xml`; IDs `btn_*`, `txt_*`, etc.; dimensiones en `dimens.xml` (p. ej. `touch_target_min = 64dp`).
+- **Layouts/recursos:** `activity_*.xml`, `item_*.xml`, `view_*.xml`; IDs `btn_*`, `txt_*`, etc.; dimensiones en `dimens.xml` (p. ej. `touch_target_min = 60dp`, `touch_target = 64dp`).
 - Clases pequeñas con una sola responsabilidad; métodos cortos; sin lógica de negocio en Activities.
 - Inmutabilidad por defecto (`final` en campos y parámetros cuando aplique).
 - Sin números mágicos: rangos, duraciones de posposición y tamaños en constantes o recursos.

@@ -16,19 +16,26 @@ Usuarios: adultos mayores con diabetes tipo 2 e hipertensión (baja visión, tem
    ```bash
    python3 .claude/skills/gerontological-ui-auditor/scripts/audit_ui.py app/src/main/res app/src/main/java
    ```
-   Detecta errores mecánicos (tamaños, `EditText`, transparencias, `textSize`, degradados). Sale con código 1 si hay `ERROR`.
+   Detecta errores mecánicos (tamaños, `EditText`, transparencias, `textSize`, degradados). Sale con código 1 si hay `ERROR`. Un hook de `.claude/settings.json` lo ejecuta solo tras cada edición de `res/` o de UI en Java; aun así, vuelve a correrlo manualmente al cerrar la pantalla.
 3. **Verifica el contraste** de cada par texto/fondo nuevo o modificado:
    ```bash
    python3 .claude/skills/gerontological-ui-auditor/scripts/contrast.py @color/text_primary @color/background
    python3 .claude/skills/gerontological-ui-auditor/scripts/contrast.py "#1A1A1A" "#FFFFFF"
    ```
-4. **Revisión manual** con la lista de comprobación de abajo: el script no ve la jerarquía visual real, el texto de los diálogos ni el flujo de confirmación.
-5. **Corrige** todo hallazgo y vuelve a ejecutar los pasos 2–4 hasta que no queden errores.
-6. **Reporta** al final de la tarea una tabla breve: regla → estado (✅ / corregido / ⚠️ pendiente con motivo).
+4. **Prueba con fuente grande** (el script estático no ve cómo se rompe un layout con texto ampliado). En emulador o dispositivo, con la pantalla abierta:
+   ```bash
+   adb shell settings put system font_scale 2.0   # probar también 1.3
+   # ...revisar la pantalla: ningún texto cortado ni superpuesto, botones visibles, scroll si hace falta
+   adb shell settings put system font_scale 1.0   # restaurar al terminar
+   ```
+   Si no hay emulador ni dispositivo disponible, **no marcar este paso como ✅**: reportarlo como ⚠️ pendiente ("sin probar con fuente 2.0×").
+5. **Revisión manual** con la lista de comprobación de abajo: el script no ve la jerarquía visual real, el texto de los diálogos ni el flujo de confirmación.
+6. **Corrige** todo hallazgo y vuelve a ejecutar los pasos 2–5 hasta que no queden errores.
+7. **Reporta** al final de la tarea una tabla breve: regla → estado (✅ / corregido / ⚠️ pendiente con motivo).
 
 ## Regla 1 — Tamaño táctil y separación
 
-- Todo control interactivo (botones, `ImageButton`, `MaterialButton`, FAB, chips, checkboxes, radios, switches, steppers +/−, diales, filas clicables, cualquier vista con `onClick`/`clickable`) mide **≥ 60dp de alto Y ≥ 60dp de ancho**.
+- Todo control interactivo (botones, `ImageButton`, `MaterialButton`, FAB, chips, checkboxes, radios, switches, steppers +/−, filas clicables, cualquier vista con `onClick`/`clickable`) mide **≥ 60dp de alto Y ≥ 60dp de ancho**.
   - Valores fijos `< 60dp` → corregir.
   - `wrap_content` sin `android:minHeight`/`android:minWidth` ≥ 60dp → corregir (los botones Material miden 48dp por defecto).
   - Usar `@dimen/touch_target_min` (60dp) / `@dimen/touch_target` (64dp+) en `res/values/dimens.xml`, no literales.
@@ -48,7 +55,7 @@ Usuarios: adultos mayores con diabetes tipo 2 e hipertensión (baja visión, tem
 ## Regla 3 — Cero `EditText` para glucosa o presión arterial
 
 - **Prohibido** `EditText`, `TextInputEditText`, `AppCompatEditText`, `AutoCompleteTextView` o cualquier vista que abra el teclado (`InputType.TYPE_CLASS_NUMBER`, `inputType="number…"`, `showSoftInput`) para capturar glucosa, presión sistólica/diastólica o cualquier signo vital.
-- Sustituir por el control numérico visual del proyecto: botones **+ / −** grandes con valor central ≥ 48sp, o dial/`NumberPicker` estilizado, con límites tomados de `VitalRanges` (CLAUDE.md §4.2) y valor inicial razonable (último registro), no 0.
+- Sustituir por el control numérico visual del proyecto: botones **+ / −** grandes con valor central ≥ 48sp, con límites tomados de `VitalRanges` (CLAUDE.md §4.2) y valor inicial razonable (último registro), no 0.
 - Si aparece cualquier `EditText` en otra parte, confirmar que no captura un signo vital; aun así, evitarlo si hay alternativa sin teclado.
 
 ## Regla 4 — Lenguaje directo y confirmación explícita
@@ -88,3 +95,4 @@ Usuarios: adultos mayores con diabetes tipo 2 e hipertensión (baja visión, tem
 - [ ] Textos en `strings.xml`, lenguaje llano, botones con verbo.
 - [ ] Borrado con diálogo "Sí, borrar / No, conservar"; guardado con confirmación visual + auditiva que nombra el valor guardado.
 - [ ] `textSize` en `sp`: cuerpo ≥ 18sp, títulos ≥ 24sp, valores capturados ≥ 48sp; `contentDescription` en controles sin texto.
+- [ ] Probado con `font_scale` 1.3 y 2.0: sin texto cortado, botones completos y alcanzables (scroll si hace falta); escala restaurada a 1.0.

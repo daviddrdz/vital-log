@@ -35,7 +35,7 @@ MARGIN_ATTRS = ("android:layout_margin", "android:layout_marginTop",
 
 JAVA_RULES = [
     (re.compile(r"new\s+(?:\w+\.)*(?:AppCompat|TextInput)?EditText\s*\("), "ERROR",
-     "EditText creado por código: prohibido para signos vitales; usa control +/− o dial."),
+     "EditText creado por código: prohibido para signos vitales; usa control +/− grande."),
     (re.compile(r"TYPE_CLASS_NUMBER|TYPE_NUMBER_FLAG"), "ERROR",
      "Entrada numérica por teclado: prohibida para signos vitales."),
     (re.compile(r"showSoftInput\s*\("), "ERROR", "Se abre el teclado virtual."),
@@ -174,7 +174,7 @@ def check_text_input(path, node):
     if "number" in input_type or "phone" in input_type or VITAL_ID_RE.search(ident):
         report("ERROR", path, node["line"],
                f"<{tag}> para captura numérica/signo vital: prohibido. "
-               "Usa control +/− grande o dial con límites de VitalRanges.")
+               "Usa control +/− grande con límites de VitalRanges.")
     else:
         report("WARN", path, node["line"],
                f"<{tag}> abre el teclado: confirma que no captura signos vitales.")
