@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">VitalLog</string>
+
+    <!-- Comunes -->
+    <string name="btn_back">Volver</string>
+
+    <!-- Dashboard principal -->
+    <string name="dashboard_title">¿Qué quieres hacer hoy?</string>
+    <string name="dashboard_hint">Toca uno de los botones grandes.</string>
+    <string name="action_register_glucose">Registrar glucosa</string>
+    <string name="action_register_pressure">Registrar presión arterial</string>
+    <string name="action_agenda">Mis medicamentos y citas</string>
+
+    <!-- Pantalla: glucosa -->
+    <string name="title_glucose_entry">Registrar glucosa</string>
+    <string name="body_glucose_entry">Aquí vas a anotar tu nivel de azúcar en la sangre (glucosa).</string>
+
+    <!-- Pantalla: presión arterial -->
+    <string name="title_pressure_entry">Registrar presión arterial</string>
+    <string name="body_pressure_entry">Aquí vas a anotar tu presión arterial: el número de arriba y el número de abajo.</string>
+
+    <!-- Pantalla: medicamentos y citas -->
+    <string name="title_agenda">Mis medicamentos y citas</string>
+    <string name="body_agenda">Aquí vas a ver tus medicamentos y tus citas con el médico.</string>
 </resources>

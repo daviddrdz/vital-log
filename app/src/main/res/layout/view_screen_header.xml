@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Encabezado común de toda pantalla secundaria: botón visible "Volver" con texto (CLAUDE.md §3.2)
+    y título de la pantalla. El título lo asigna BaseScreenActivity.
+    Se incluye dentro de un LinearLayout vertical.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:orientation="vertical"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_back"
+        style="@style/Widget.VitalLog.Button.Back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="@dimen/touch_target"
+        android:minHeight="@dimen/touch_target"
+        android:text="@string/btn_back" />
+
+    <TextView
+        android:id="@+id/txt_screen_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_large"
+        android:accessibilityHeading="true"
+        android:textAppearance="@style/TextAppearance.VitalLog.Title"
+        tools:targetApi="p"
+        tools:text="@string/title_glucose_entry" />
+</merge>

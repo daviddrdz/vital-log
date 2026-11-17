@@ -1,19 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!--
+    Dashboard principal: navegación 100% plana (CLAUDE.md §3.2).
+    Tres acciones masivas a todo lo ancho; ScrollView para que funcione con escala de fuente 2.0×.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/screen_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:fillViewport="true"
+    tools:context=".ui.home.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/txt_dashboard_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
+            android:text="@string/dashboard_title"
+            android:textAppearance="@style/TextAppearance.VitalLog.Title"
+            tools:targetApi="p" />
+
+        <TextView
+            android:id="@+id/txt_dashboard_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_touch"
+            android:lineSpacingMultiplier="1.2"
+            android:text="@string/dashboard_hint"
+            android:textAppearance="@style/TextAppearance.VitalLog.Body" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_register_glucose"
+            style="@style/Widget.VitalLog.Button.Action.Glucose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:minHeight="@dimen/action_button_height"
+            android:text="@string/action_register_glucose" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_register_pressure"
+            style="@style/Widget.VitalLog.Button.Action.Pressure"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:minHeight="@dimen/action_button_height"
+            android:text="@string/action_register_pressure" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_agenda"
+            style="@style/Widget.VitalLog.Button.Action.Agenda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:minHeight="@dimen/action_button_height"
+            android:text="@string/action_agenda" />
+    </LinearLayout>
+</ScrollView>
