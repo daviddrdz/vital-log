@@ -1,8 +1,32 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.VitalLog" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <!--
+        Tema claro fijo (sin DayNight): texto oscuro sobre fondo claro sólido.
+        No existe variante values-night a propósito (CLAUDE.md §3.3).
+    -->
+    <style name="Base.Theme.VitalLog" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorOnPrimary">@color/background</item>
+        <item name="colorPrimaryContainer">@color/brand_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/text_primary</item>
+        <item name="colorSecondary">@color/brand_primary</item>
+        <item name="colorOnSecondary">@color/background</item>
+        <item name="colorSurface">@color/background</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/outline_strong</item>
+        <item name="colorError">@color/status_danger</item>
+        <item name="colorOnError">@color/background</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:windowBackground">@color/background</item>
+
+        <!-- Iconos oscuros en las barras del sistema sobre el fondo claro -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+        <item name="materialButtonStyle">@style/Widget.VitalLog.Button</item>
     </style>
 
     <style name="Theme.VitalLog" parent="Base.Theme.VitalLog" />

@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Paleta de alto contraste de VitalLog (CLAUDE.md §3.3).
+    Regla: texto e iconos oscuros sobre fondos claros sólidos, contraste ≥ 7:1 (WCAG AAA).
+    Ningún color lleva canal alfa. Verificar cada par nuevo con
+    .claude/skills/gerontological-ui-auditor/scripts/contrast.py
+-->
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Base -->
+    <color name="background">#FFFFFFFF</color>
+    <color name="text_primary">#FF1A1A1A</color>
+    <color name="text_secondary">#FF3D3D3D</color>
+    <color name="outline_strong">#FF1A1A1A</color>
+
+    <!-- Marca: acento oscuro para bordes, iconos y texto sobre fondo claro.
+         La app no usa superficies rellenas de colorPrimary (serían claro sobre oscuro). -->
+    <color name="brand_primary">#FF0A3A80</color>
+    <color name="brand_primary_container">#FFE3EEFF</color>
+
+    <!-- Botón neutro ("Volver") -->
+    <color name="surface_neutral">#FFEDEDED</color>
+
+    <!-- Acciones del dashboard: fondo claro + acento oscuro para icono y borde -->
+    <color name="action_glucose_bg">#FFE3EEFF</color>
+    <color name="action_glucose_fg">#FF0A3A80</color>
+    <color name="action_pressure_bg">#FFFDE8E8</color>
+    <color name="action_pressure_fg">#FF8A0F0F</color>
+    <color name="action_agenda_bg">#FFE4F3E8</color>
+    <color name="action_agenda_fg">#FF0B5A23</color>
+
+    <!-- Estados de lectura (siempre acompañados de texto, nunca solo color) -->
+    <color name="status_ok">#FF0B5A23</color>
+    <color name="status_warning">#FF6B3E00</color>
+    <color name="status_danger">#FF8A0F0F</color>
 </resources>

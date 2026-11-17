@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dimensiones de accesibilidad gerontológica (CLAUDE.md §3.3). -->
+<resources>
+    <!-- Áreas táctiles: mínimo 60dp, ideal ≥ 64dp -->
+    <dimen name="touch_target_min">60dp</dimen>
+    <dimen name="touch_target">64dp</dimen>
+    <dimen name="action_button_height">120dp</dimen>
+    <dimen name="alarm_button_height">96dp</dimen>
+
+    <!-- Espaciado: ≥ 12dp entre objetivos táctiles -->
+    <dimen name="spacing_touch">12dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="screen_padding">24dp</dimen>
+
+    <!-- Forma de los botones -->
+    <dimen name="corner_radius">16dp</dimen>
+    <dimen name="stroke_strong">3dp</dimen>
+    <dimen name="button_padding_horizontal">24dp</dimen>
+    <dimen name="button_padding_vertical">16dp</dimen>
+    <dimen name="icon_size">32dp</dimen>
+    <dimen name="icon_action_size">56dp</dimen>
+    <dimen name="icon_padding">12dp</dimen>
+
+    <!-- Tipografía (siempre sp): cuerpo 18–20sp, títulos ≥ 24sp, valores ≥ 48sp -->
+    <dimen name="text_body">20sp</dimen>
+    <dimen name="text_button">22sp</dimen>
+    <dimen name="text_action">26sp</dimen>
+    <dimen name="text_title">28sp</dimen>
+    <dimen name="text_value">56sp</dimen>
+</resources>
