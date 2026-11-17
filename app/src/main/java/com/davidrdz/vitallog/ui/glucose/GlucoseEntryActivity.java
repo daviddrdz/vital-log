@@ -1,10 +1,23 @@
 package com.davidrdz.vitallog.ui.glucose;
 
-import com.davidrdz.vitallog.R;
-import com.davidrdz.vitallog.ui.common.BaseScreenActivity;
+import android.os.Bundle;
 
-/** Pantalla para registrar la glucosa. En el Hito 2 recibe el control numérico +/−. */
+import androidx.annotation.Nullable;
+
+import com.davidrdz.vitallog.R;
+import com.davidrdz.vitallog.analytics.VitalRanges;
+import com.davidrdz.vitallog.ui.common.BaseScreenActivity;
+import com.davidrdz.vitallog.ui.widget.NumericStepperView;
+
+/** Pantalla para registrar la glucosa con el control +/−. El guardado llega en el Hito 3. */
 public class GlucoseEntryActivity extends BaseScreenActivity {
+
+    @Override
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final NumericStepperView glucose = findViewById(R.id.stepper_glucose);
+        glucose.bind(VitalRanges.GLUCOSE);
+    }
 
     @Override
     protected int getLayoutRes() {
