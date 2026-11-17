@@ -6,6 +6,7 @@
     <dimen name="touch_target">64dp</dimen>
     <dimen name="action_button_height">120dp</dimen>
     <dimen name="alarm_button_height">96dp</dimen>
+    <dimen name="stepper_button_height">80dp</dimen>
 
     <!-- Espaciado: ≥ 12dp entre objetivos táctiles -->
     <dimen name="spacing_touch">12dp</dimen>
@@ -26,6 +27,7 @@
     <dimen name="text_body">20sp</dimen>
     <dimen name="text_button">22sp</dimen>
     <dimen name="text_action">26sp</dimen>
+    <dimen name="text_label">24sp</dimen>
     <dimen name="text_title">28sp</dimen>
     <dimen name="text_value">56sp</dimen>
 </resources>

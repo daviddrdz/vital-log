@@ -4,6 +4,24 @@
     <!-- Comunes -->
     <string name="btn_back">Volver</string>
 
+    <!-- Unidades: abreviatura visible junto al número y forma hablada para TalkBack -->
+    <string name="unit_mg_dl">mg/dL</string>
+    <string name="unit_mg_dl_spoken">miligramos por decilitro</string>
+    <string name="unit_mmhg">mmHg</string>
+    <string name="unit_mmhg_spoken">milímetros de mercurio</string>
+
+    <!-- Control numérico + / − -->
+    <string name="stepper_increase">Subir</string>
+    <string name="stepper_decrease">Bajar</string>
+    <string name="stepper_at_max">Máximo</string>
+    <string name="stepper_at_min">Mínimo</string>
+    <string name="stepper_value">%1$d</string>
+    <string name="stepper_value_description">%1$s: %2$d %3$s</string>
+    <string name="stepper_increase_description">Subir el número de %1$s</string>
+    <string name="stepper_decrease_description">Bajar el número de %1$s</string>
+    <string name="stepper_at_max_description">%1$s está en el máximo. No puede subir más.</string>
+    <string name="stepper_at_min_description">%1$s está en el mínimo. No puede bajar más.</string>
+
     <!-- Dashboard principal -->
     <string name="dashboard_title">¿Qué quieres hacer hoy?</string>
     <string name="dashboard_hint">Toca uno de los botones grandes.</string>
@@ -13,11 +31,14 @@
 
     <!-- Pantalla: glucosa -->
     <string name="title_glucose_entry">Registrar glucosa</string>
-    <string name="body_glucose_entry">Aquí vas a anotar tu nivel de azúcar en la sangre (glucosa).</string>
+    <string name="body_glucose_entry">Toca Subir o Bajar hasta ver tu número de azúcar en la sangre (glucosa). Si dejas el dedo presionado, el número cambia más rápido.</string>
+    <string name="stepper_label_glucose">Azúcar en la sangre</string>
 
     <!-- Pantalla: presión arterial -->
     <string name="title_pressure_entry">Registrar presión arterial</string>
-    <string name="body_pressure_entry">Aquí vas a anotar tu presión arterial: el número de arriba y el número de abajo.</string>
+    <string name="body_pressure_entry">Toca Subir o Bajar hasta ver los dos números de tu presión arterial. Si dejas el dedo presionado, el número cambia más rápido.</string>
+    <string name="stepper_label_systolic">Presión alta (número de arriba)</string>
+    <string name="stepper_label_diastolic">Presión baja (número de abajo)</string>
 
     <!-- Pantalla: medicamentos y citas -->
     <string name="title_agenda">Mis medicamentos y citas</string>

@@ -1,4 +1,4 @@
-a<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- ===== Tipografía ===== -->
@@ -12,6 +12,12 @@ a<?xml version="1.0" encoding="utf-8"?>
     <style name="TextAppearance.VitalLog.Body" parent="TextAppearance.Material3.BodyLarge">
         <item name="android:textSize">@dimen/text_body</item>
         <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="TextAppearance.VitalLog.Label" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">@dimen/text_label</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textColor">@color/text_primary</item>
     </style>
 
@@ -59,6 +65,18 @@ a<?xml version="1.0" encoding="utf-8"?>
         <item name="android:textSize">@dimen/text_action</item>
         <item name="iconGravity">top</item>
         <item name="iconSize">@dimen/icon_action_size</item>
+    </style>
+
+    <!-- Botones Subir / Bajar del control numérico: a todo lo ancho, ≥ 80dp, signo + texto.
+         Al llegar a un límite, NumericStepperView cambia a surface_neutral + outline_strong
+         con el texto "Máximo"/"Mínimo" (colores sólidos, nunca opacidad reducida). -->
+    <style name="Widget.VitalLog.Button.Stepper">
+        <item name="android:minHeight">@dimen/stepper_button_height</item>
+        <item name="android:textSize">@dimen/text_action</item>
+        <item name="backgroundTint">@color/brand_primary_container</item>
+        <item name="strokeColor">@color/brand_primary</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconSize">@dimen/icon_size</item>
     </style>
 
     <style name="Widget.VitalLog.Button.Action.Glucose">

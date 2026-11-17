@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Control numérico +/− (CLAUDE.md §3.1). Lo infla NumericStepperView (LinearLayout vertical).
+    Disposición vertical: "Subir" arriba, el número en el centro, "Bajar" abajo. Los botones van a
+    todo lo ancho para que "Máximo"/"Mínimo" y el número quepan con escala de fuente 2.0×.
+    Sin números en el XML: límites, valor inicial y unidad llegan desde Java con bind().
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:orientation="vertical"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <TextView
+        android:id="@+id/txt_stepper_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.VitalLog.Label"
+        tools:text="@string/stepper_label_glucose" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_stepper_increase"
+        style="@style/Widget.VitalLog.Button.Stepper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_touch"
+        android:minWidth="@dimen/touch_target"
+        android:minHeight="@dimen/stepper_button_height"
+        android:text="@string/stepper_increase"
+        app:icon="@drawable/ic_add" />
+
+    <TextView
+        android:id="@+id/txt_stepper_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_touch"
+        android:accessibilityLiveRegion="polite"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.VitalLog.Value"
+        tools:text="100" />
+
+    <TextView
+        android:id="@+id/txt_stepper_unit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:importantForAccessibility="no"
+        android:textAppearance="@style/TextAppearance.VitalLog.Body"
+        android:textColor="@color/text_secondary"
+        tools:text="@string/unit_mg_dl" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_stepper_decrease"
+        style="@style/Widget.VitalLog.Button.Stepper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_touch"
+        android:minWidth="@dimen/touch_target"
+        android:minHeight="@dimen/stepper_button_height"
+        android:text="@string/stepper_decrease"
+        app:icon="@drawable/ic_remove" />
+</merge>
