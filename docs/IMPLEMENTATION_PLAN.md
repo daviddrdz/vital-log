@@ -1,6 +1,6 @@
 # VitalLog — Plan de implementación (6 hitos)
 
-Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.pdf`. Al terminar cada hito la app **compila y se puede demostrar en un emulador Android**.
+Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.pdf`. Al terminar cada hito la app **compila y pasa sus pruebas JVM**. Claude no usa emulador ni dispositivo: la demo en dispositivo la hace el usuario (ver bloques "Verificación manual").
 
 ## Decisiones tomadas (conflictos resueltos con CLAUDE.md)
 
@@ -20,8 +20,9 @@ Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.p
   1. `./gradlew assembleDebug test lint` en verde.
   2. `python3 .claude/skills/gerontological-ui-auditor/scripts/audit_ui.py app/src/main/res app/src/main/java` sin `ERROR`.
   3. `contrast.py` para cada par de colores (texto/fondo) nuevo, con resultado ≥ 7:1.
-  4. Demo manual en el emulador (API 34+) con escala de fuente 1.0× y 2.0×.
-  5. Un commit por hito.
+  4. Revisión estática de escala de fuente (sin alturas fijas en contenedores de texto, `ScrollView` donde haga falta, sin `maxLines`/`ellipsize` que corten texto).
+  5. Sin commit de Claude: el usuario revisa el diff y commitea.
+- Pruebas instrumentadas (`androidTest/`): se escriben como indica cada hito, pero Claude **no las ejecuta** (requieren emulador); se reportan como "escritas, no ejecutadas".
 - Dependencias nuevas solo vía `gradle/libs.versions.toml`.
 - Textos en `strings.xml`, dimensiones en `dimens.xml`, colores en `colors.xml`. Nada literal en layouts ni en Java.
 - Inyección manual de dependencias: `VitalLogApp` (Application) crea y expone los repositorios; los ViewModels los reciben con un `ViewModelProvider.Factory`.
@@ -141,7 +142,7 @@ Las pruebas siguen la misma estructura de paquetes:
 - Instrumentada `DashboardNavigationTest` (Espresso): los 3 botones son visibles, miden ≥ 64dp y abren su pantalla; "Volver" regresa al dashboard.
 - Se eliminan `ExampleUnitTest` y `ExampleInstrumentedTest`.
 
-**Demo**: el dashboard se ve bien con escala de fuente 1.0× y 2.0×, sin texto cortado. Cada botón abre su pantalla y "Volver" regresa.
+**Verificación manual del usuario** (Claude no la ejecuta): el dashboard se ve bien con escala de fuente 1.0× y 2.0×, sin texto cortado. Cada botón abre su pantalla y "Volver" regresa.
 
 ---
 
@@ -165,7 +166,7 @@ Las pruebas siguen la misma estructura de paquetes:
 - `AccelerationPolicyTest`: el paso cambia en las repeticiones 10 y 20, y vuelve a 1 al reiniciar.
 - `VitalRangesTest`: en cada rango, min < típico < max; el rango de la sistólica es compatible con el de la diastólica más la presión de pulso mínima.
 
-**Demo**: subir y bajar con toques sueltos y manteniendo presionado (se nota la aceleración). La glucosa no baja de 20 ni sube de 600. El teclado nunca aparece.
+**Verificación manual del usuario** (Claude no la ejecuta): subir y bajar con toques sueltos y manteniendo presionado (se nota la aceleración). La glucosa no baja de 20 ni sube de 600. El teclado nunca aparece.
 
 ---
 
@@ -197,7 +198,7 @@ Las pruebas siguen la misma estructura de paquetes:
 - `MedicationDaoTest` y `DoseLogDaoTest`: clave foránea y tomas por día.
 - `AppointmentDaoTest`: solo devuelve citas futuras y activas.
 
-**Demo**: guardar una glucosa → banner y tono. Cerrar y abrir la app → el control arranca en el último valor. Dar de alta un medicamento y una cita y verlos en la agenda. En modo avión todo funciona igual.
+**Verificación manual del usuario** (Claude no la ejecuta): guardar una glucosa → banner y tono. Cerrar y abrir la app → el control arranca en el último valor. Dar de alta un medicamento y una cita y verlos en la agenda. En modo avión todo funciona igual.
 
 ---
 
@@ -225,7 +226,7 @@ Las pruebas siguen la misma estructura de paquetes:
 - `ReadingClassifierTest`: cada frontera de categoría, probada por ambos lados.
 - `VitalsRepositoryTest` ampliado: una lectura inválida nunca llega al DAO y devuelve el motivo correcto.
 
-**Demo**: con la presión en 90/85 → error visual + tono grave, y no se guarda. Con glucosa 320 → aviso "muy alta", se guarda y se confirma.
+**Verificación manual del usuario** (Claude no la ejecuta): con la presión en 90/85 → error visual + tono grave, y no se guarda. Con glucosa 320 → aviso "muy alta", se guarda y se confirma.
 
 ---
 
@@ -262,7 +263,7 @@ Las pruebas siguen la misma estructura de paquetes:
 **Pruebas instrumentadas**
 - `FullScreenAlarmActivityTest`: se muestran exactamente 2 botones; "Ya lo tomé" crea un `DoseLog` en la base de datos en memoria.
 
-**Demo** (emulador API 34+):
+**Verificación manual del usuario** (dispositivo/emulador API 34+; Claude no la ejecuta):
 1. Crear un medicamento para dentro de 2 min.
 2. Bloquear la pantalla (`adb shell input keyevent KEYCODE_SLEEP`) y esperar: la pantalla se enciende con el modal.
 3. Tocar "Recordar más tarde": el modal vuelve 10 min después.
@@ -295,7 +296,7 @@ Las pruebas siguen la misma estructura de paquetes:
 **Pruebas instrumentadas**
 - `HistoryActivityTest`: con datos de prueba cargados, cada fila muestra el valor, la unidad y la categoría en texto.
 
-**Demo**: guardar una lectura → animación + sonido agradable. Provocar un error → sonido distinto. Abrir "Ver mi historial" con 30 días de datos y mostrarlo como se le mostraría al médico.
+**Verificación manual del usuario** (Claude no la ejecuta): guardar una lectura → animación + sonido agradable. Provocar un error → sonido distinto. Abrir "Ver mi historial" con 30 días de datos y mostrarlo como se le mostraría al médico.
 
 ---
 

@@ -7,6 +7,15 @@
       "Bash(./gradlew clean:*)",
       "Bash(python3 .claude/skills/gerontological-ui-auditor/scripts/audit_ui.py:*)",
       "Bash(python3 .claude/skills/gerontological-ui-auditor/scripts/contrast.py:*)"
+    ],
+    "deny": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(adb:*)",
+      "Bash(emulator:*)",
+      "Bash(./gradlew installDebug:*)",
+      "Bash(./gradlew connectedAndroidTest:*)"
     ]
   },
   "hooks": {

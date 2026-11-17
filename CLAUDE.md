@@ -2,7 +2,7 @@
 
 Fuente de verdad del proyecto. Toda decisión de código, UI o arquitectura debe respetar este documento. Si una petición lo contradice, se señala el conflicto antes de implementar.
 
-**Plan de trabajo:** @docs/IMPLEMENTATION_PLAN.md (6 hitos; detalle de archivos, pruebas y demos por hito).
+**Plan de trabajo:** @docs/IMPLEMENTATION_PLAN.md (6 hitos; detalle de archivos y pruebas por hito).
 **Estado actual:** Hito 1 completo → siguiente: Hito 2 (control numérico visual). Actualizar esta línea al cerrar cada hito.
 
 ## 1. Contexto del producto
@@ -63,7 +63,7 @@ Los errores de validación también tienen feedback visual + auditivo (tono dist
 - Frases cortas, en segunda persona, sin abreviaturas ambiguas (escribir "Presión arterial", no "PA").
 
 ### 3.6 Auditoría obligatoria
-Al crear o modificar layouts, estilos, temas, drawables o vistas Java de UI, aplicar la skill `.claude/skills/gerontological-ui-auditor/` (script `audit_ui.py` + contraste + revisión manual + prueba con fuente 2.0×) antes de dar la pantalla por terminada. Un hook (`.claude/settings.json`) ejecuta `audit_ui.py` automáticamente tras cada edición de `res/` o de código de UI; sus errores se corrigen antes de continuar.
+Al crear o modificar layouts, estilos, temas, drawables o vistas Java de UI, aplicar la skill `.claude/skills/gerontological-ui-auditor/` (script `audit_ui.py` + contraste + revisión manual + revisión estática de escala de fuente) antes de dar la pantalla por terminada. Un hook (`.claude/settings.json`) ejecuta `audit_ui.py` automáticamente tras cada edición de `res/` o de código de UI; sus errores se corrigen antes de continuar.
 
 ## 4. Arquitectura de módulos
 
@@ -117,9 +117,8 @@ Rangos biológicamente posibles (límites de captura):
 
 ```bash
 ./gradlew assembleDebug          # Compilar APK de depuración
-./gradlew installDebug           # Instalar en dispositivo/emulador conectado
 ./gradlew test                   # Pruebas unitarias (JVM)
-./gradlew connectedAndroidTest   # Pruebas instrumentadas (requiere dispositivo)
+# connectedAndroidTest / installDebug: NO ejecutar (requieren emulador o dispositivo; el usuario los corre por su cuenta)
 ./gradlew lint                   # Análisis estático de Android Lint
 ./gradlew clean                  # Limpiar artefactos de compilación
 python3 .claude/skills/gerontological-ui-auditor/scripts/audit_ui.py app/src/main/res app/src/main/java
@@ -127,11 +126,13 @@ python3 .claude/skills/gerontological-ui-auditor/scripts/audit_ui.py app/src/mai
 
 **Tarea terminada:** `./gradlew assembleDebug test lint` en verde y `audit_ui.py` sin `ERROR`.
 
-**Hito terminado** (además de lo anterior): `contrast.py` ≥ 7:1 para cada par de colores nuevo, demo en emulador (API 34+) con fuente 1.0× y 2.0×, un commit por hito y la línea "Estado actual" de este archivo actualizada.
+**Hito terminado** (además de lo anterior): `contrast.py` ≥ 7:1 para cada par de colores nuevo, revisión estática de escala de fuente (ver skill) y la línea "Estado actual" de este archivo actualizada. La demo en dispositivo la hace el usuario, no Claude.
 
-**Honestidad al verificar:** nunca declarar algo "verificado", "compilado" o "probado" sin haber ejecutado el comando. Si Gradle, el emulador o un dispositivo no están disponibles, decirlo explícitamente y listar qué quedó sin comprobar.
+**Honestidad al verificar:** nunca declarar algo "verificado", "compilado" o "probado" sin haber ejecutado el comando. Si Gradle no está disponible, decirlo explícitamente y listar qué quedó sin comprobar.
 
-**Commits:** Conventional Commits (`feat(ui): …`, `test(ui): …`, `fix(alarms): …`, `docs: …`), en inglés, en imperativo.
+**Sin emulador:** Claude **nunca** abre ni arranca un emulador, ni ejecuta `adb`, `installDebug` o `connectedAndroidTest`. Las pruebas instrumentadas (`androidTest/`) sí se escriben cuando el plan las pide, pero se reportan como "escritas, no ejecutadas".
+
+**Git:** Claude **nunca** hace `git add`, `commit` ni `push`; solo deja los cambios en el árbol de trabajo y el usuario los revisa y commitea. Al terminar puede sugerir un mensaje en Conventional Commits (`feat(ui): …`, `fix(alarms): …`, `docs: …`), en inglés e imperativo.
 
 ## 6. Convenciones de código limpio (Java)
 
