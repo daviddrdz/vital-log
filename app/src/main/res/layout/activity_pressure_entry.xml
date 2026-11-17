@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/screen_root"
     android:layout_width="match_parent"
@@ -23,5 +24,19 @@
             android:lineSpacingMultiplier="1.2"
             android:text="@string/body_pressure_entry"
             android:textAppearance="@style/TextAppearance.VitalLog.Body" />
+
+        <com.davidrdz.vitallog.ui.widget.NumericStepperView
+            android:id="@+id/stepper_systolic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            app:stepperLabel="@string/stepper_label_systolic" />
+
+        <com.davidrdz.vitallog.ui.widget.NumericStepperView
+            android:id="@+id/stepper_diastolic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            app:stepperLabel="@string/stepper_label_diastolic" />
     </LinearLayout>
 </ScrollView>

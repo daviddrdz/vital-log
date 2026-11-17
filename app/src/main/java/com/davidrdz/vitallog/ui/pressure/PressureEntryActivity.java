@@ -1,10 +1,28 @@
 package com.davidrdz.vitallog.ui.pressure;
 
-import com.davidrdz.vitallog.R;
-import com.davidrdz.vitallog.ui.common.BaseScreenActivity;
+import android.os.Bundle;
 
-/** Pantalla para registrar la presión arterial. En el Hito 2 recibe los dos controles +/−. */
+import androidx.annotation.Nullable;
+
+import com.davidrdz.vitallog.R;
+import com.davidrdz.vitallog.analytics.VitalRanges;
+import com.davidrdz.vitallog.ui.common.BaseScreenActivity;
+import com.davidrdz.vitallog.ui.widget.NumericStepperView;
+
+/**
+ * Pantalla para registrar la presión arterial con dos controles +/− (número de arriba y de abajo).
+ * El guardado llega en el Hito 3 y la regla "arriba &gt; abajo" en el Hito 4.
+ */
 public class PressureEntryActivity extends BaseScreenActivity {
+
+    @Override
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final NumericStepperView systolic = findViewById(R.id.stepper_systolic);
+        systolic.bind(VitalRanges.SYSTOLIC);
+        final NumericStepperView diastolic = findViewById(R.id.stepper_diastolic);
+        diastolic.bind(VitalRanges.DIASTOLIC);
+    }
 
     @Override
     protected int getLayoutRes() {
