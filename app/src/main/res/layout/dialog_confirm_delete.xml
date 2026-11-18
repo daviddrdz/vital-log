@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Confirmación de borrado: pregunta concreta y dos botones grandes apilados. La opción segura
+    ("No, conservar") va primero y separada ≥ 24dp de "Sí, borrar". ScrollView para fuente 2.0×.
+    El fondo blanco explícito evita que el texto quede sobre la superficie tintada del diálogo M3.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    tools:ignore="Overdraw">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding">
+
+        <TextView
+            android:id="@+id/txt_confirm_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
+            android:textAppearance="@style/TextAppearance.VitalLog.Title"
+            tools:targetApi="p"
+            tools:text="@string/confirm_delete_medication_question" />
+
+        <TextView
+            android:id="@+id/txt_confirm_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:textAppearance="@style/TextAppearance.VitalLog.Body"
+            tools:text="@string/confirm_delete_medication_detail" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_confirm_keep"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:minWidth="@dimen/touch_target"
+            android:minHeight="@dimen/primary_button_height"
+            android:text="@string/btn_confirm_keep" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_confirm_delete"
+            style="@style/Widget.VitalLog.Button.Delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:minWidth="@dimen/touch_target"
+            android:minHeight="@dimen/primary_button_height"
+            android:text="@string/btn_confirm_delete" />
+    </LinearLayout>
+</ScrollView>

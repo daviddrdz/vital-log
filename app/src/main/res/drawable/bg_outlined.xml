@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Blanco sólido con borde oscuro: tarjetas de la agenda y campos de texto. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/background" />
+    <stroke
+        android:width="@dimen/stroke_strong"
+        android:color="@color/outline_strong" />
+    <corners android:radius="@dimen/corner_radius" />
+</shape>

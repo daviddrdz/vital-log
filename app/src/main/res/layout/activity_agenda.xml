@@ -1,27 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    "Mis medicamentos y citas": dos listas con su botón de agregar. Las listas son RecyclerView sin
+    scroll propio dentro de un NestedScrollView (pocas filas; todo se desplaza junto).
+    El banner de confirmación va al pie, fuera del scroll, para que siempre se vea.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/screen_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
+    android:orientation="vertical"
     tools:context=".ui.agenda.AgendaActivity">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/screen_padding">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-        <include layout="@layout/view_screen_header" />
-
-        <TextView
-            android:id="@+id/txt_agenda_body"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_medium"
-            android:lineSpacingMultiplier="1.2"
-            android:text="@string/body_agenda"
-            android:textAppearance="@style/TextAppearance.VitalLog.Body" />
-    </LinearLayout>
-</ScrollView>
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
+
+            <include layout="@layout/view_screen_header" />
+
+            <TextView
+                android:id="@+id/txt_agenda_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/body_agenda"
+                android:textAppearance="@style/TextAppearance.VitalLog.Body" />
+
+            <!-- Medicamentos -->
+            <TextView
+                android:id="@+id/txt_medications_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:accessibilityHeading="true"
+                android:text="@string/agenda_medications_title"
+                android:textAppearance="@style/TextAppearance.VitalLog.Title"
+                tools:targetApi="p" />
+
+            <TextView
+                android:id="@+id/txt_medications_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:text="@string/agenda_medications_empty"
+                android:textAppearance="@style/TextAppearance.VitalLog.Body" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_medications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_medication" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_medication"
+                style="@style/Widget.VitalLog.Button.Add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:minWidth="@dimen/touch_target"
+                android:minHeight="@dimen/primary_button_height"
+                android:text="@string/btn_add_medication" />
+
+            <!-- Citas -->
+            <TextView
+                android:id="@+id/txt_appointments_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:accessibilityHeading="true"
+                android:text="@string/agenda_appointments_title"
+                android:textAppearance="@style/TextAppearance.VitalLog.Title"
+                tools:targetApi="p" />
+
+            <TextView
+                android:id="@+id/txt_appointments_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:text="@string/agenda_appointments_empty"
+                android:textAppearance="@style/TextAppearance.VitalLog.Body" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_appointments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="1"
+                tools:listitem="@layout/item_appointment" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_appointment"
+                style="@style/Widget.VitalLog.Button.Add"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:minWidth="@dimen/touch_target"
+                android:minHeight="@dimen/primary_button_height"
+                android:text="@string/btn_add_appointment"
+                app:icon="@drawable/ic_calendar" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.davidrdz.vitallog.feedback.FeedbackBannerView
+        android:id="@+id/feedback_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginBottom="@dimen/spacing_medium" />
+</LinearLayout>

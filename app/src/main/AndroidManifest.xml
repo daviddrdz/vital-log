@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:allowBackup="true"
+        android:name=".VitalLogApp"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -35,6 +36,19 @@
             android:name=".ui.agenda.AgendaActivity"
             android:exported="false"
             android:label="@string/title_agenda" />
+
+        <!-- Formularios de la agenda: un paso de la tarea que siempre regresa a la agenda. -->
+        <activity
+            android:name=".ui.agenda.MedicationFormActivity"
+            android:exported="false"
+            android:label="@string/title_medication_form"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
+            android:name=".ui.agenda.AppointmentFormActivity"
+            android:exported="false"
+            android:label="@string/title_appointment_form"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
     </application>
 
 </manifest>

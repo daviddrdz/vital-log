@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fila de la agenda: tarjeta con nombre, dos líneas de detalle y botón visible "Borrar". -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_touch"
+    android:background="@drawable/bg_outlined"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_medium">
+
+    <TextView
+        android:id="@+id/txt_appointment_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/icon_padding"
+        android:gravity="center_vertical"
+        android:textAppearance="@style/TextAppearance.VitalLog.Label"
+        app:drawableStartCompat="@drawable/ic_calendar"
+        app:drawableTint="@color/action_agenda_fg"
+        tools:text="Doctora López" />
+
+    <TextView
+        android:id="@+id/txt_appointment_day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_touch"
+        android:textAppearance="@style/TextAppearance.VitalLog.Body"
+        tools:text="@string/appointment_day_line" />
+
+    <TextView
+        android:id="@+id/txt_appointment_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_touch"
+        android:textAppearance="@style/TextAppearance.VitalLog.Body"
+        tools:text="@string/appointment_time_line" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_delete_appointment"
+        style="@style/Widget.VitalLog.Button.Delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:minWidth="@dimen/touch_target"
+        android:minHeight="@dimen/touch_target"
+        android:text="@string/btn_delete" />
+</LinearLayout>

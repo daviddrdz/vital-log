@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Formulario de la agenda. El nombre se escribe con teclado (no es un signo vital, CLAUDE.md §3.1);
+    los números se eligen con controles +/−. Al guardar vuelve a la agenda, que muestra el banner.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/screen_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".ui.agenda.MedicationFormActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding">
+
+        <include layout="@layout/view_screen_header" />
+
+        <TextView
+            android:id="@+id/txt_form_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:lineSpacingMultiplier="1.2"
+            android:text="@string/body_medication_form"
+            android:textAppearance="@style/TextAppearance.VitalLog.Body" />
+
+        <TextView
+            android:id="@+id/txt_name_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:labelFor="@id/edit_medication_name"
+            android:text="@string/label_medication_name"
+            android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+
+        <EditText
+            android:id="@+id/edit_medication_name"
+            style="@style/Widget.VitalLog.TextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_touch"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:inputType="textCapSentences"
+            android:minHeight="@dimen/touch_target" />
+
+        <TextView
+            android:id="@+id/txt_name_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_touch"
+            android:accessibilityLiveRegion="polite"
+            android:text="@string/error_medication_name_missing"
+            android:textAppearance="@style/TextAppearance.VitalLog.Error"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <com.davidrdz.vitallog.ui.widget.NumericStepperView
+            android:id="@+id/stepper_dose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            app:stepperLabel="@string/stepper_label_dose" />
+
+        <TextView
+            android:id="@+id/txt_dose_unit_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="@string/label_dose_unit"
+            android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_unit_tablet"
+            style="@style/Widget.VitalLog.Button.Choice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_touch"
+            android:minWidth="@dimen/touch_target"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/choice_tablet" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_unit_capsule"
+            style="@style/Widget.VitalLog.Button.Choice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_touch"
+            android:minWidth="@dimen/touch_target"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/choice_capsule" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_unit_milliliter"
+            style="@style/Widget.VitalLog.Button.Choice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_touch"
+            android:minWidth="@dimen/touch_target"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/choice_milliliter" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_unit_unit"
+            style="@style/Widget.VitalLog.Button.Choice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_touch"
+            android:minWidth="@dimen/touch_target"
+            android:minHeight="@dimen/touch_target"
+            android:text="@string/choice_unit" />
+
+        <include layout="@layout/view_time_steppers" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_medication"
+            style="@style/Widget.VitalLog.Button.Save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:minWidth="@dimen/touch_target"
+            android:minHeight="@dimen/primary_button_height"
+            android:text="@string/btn_save_medication" />
+    </LinearLayout>
+</ScrollView>
