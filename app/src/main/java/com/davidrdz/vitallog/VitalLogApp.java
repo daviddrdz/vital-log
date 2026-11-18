@@ -6,6 +6,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.davidrdz.vitallog.alarms.AlarmScheduler;
+import com.davidrdz.vitallog.alarms.ReminderNotifier;
 import com.davidrdz.vitallog.data.db.AppDatabase;
 import com.davidrdz.vitallog.data.repository.AppointmentRepository;
 import com.davidrdz.vitallog.data.repository.MedicationRepository;
@@ -26,6 +28,8 @@ public class VitalLogApp extends Application {
     private MedicationRepository medicationRepository;
     private AppointmentRepository appointmentRepository;
     private SpokenTimeFormatter.Labels timeLabels;
+    private AlarmScheduler alarmScheduler;
+    private ReminderNotifier reminderNotifier;
 
     @Override
     public void onCreate() {
@@ -33,11 +37,15 @@ public class VitalLogApp extends Application {
         final AppDatabase database = AppDatabase.getInstance(this);
         final RepositoryExecutors executors = new RepositoryExecutors(
                 AppDatabase.getWriteExecutor(), ContextCompat.getMainExecutor(this));
+        ReminderNotifier.createChannel(this);
+        reminderNotifier = new ReminderNotifier(this);
+        alarmScheduler = new AlarmScheduler(this);
         vitalsRepository = new VitalsRepository(database.glucoseReadingDao(),
                 database.bloodPressureReadingDao(), executors);
         medicationRepository = new MedicationRepository(database.medicationDao(),
-                database.doseLogDao(), executors);
-        appointmentRepository = new AppointmentRepository(database.appointmentDao(), executors);
+                database.doseLogDao(), executors, alarmScheduler);
+        appointmentRepository = new AppointmentRepository(database.appointmentDao(), executors,
+                alarmScheduler);
         timeLabels = new SpokenTimeFormatter.Labels(
                 getString(R.string.time_pattern),
                 getString(R.string.time_period_early_morning),
@@ -70,6 +78,16 @@ public class VitalLogApp extends Application {
     @NonNull
     public AppointmentRepository getAppointmentRepository() {
         return appointmentRepository;
+    }
+
+    @NonNull
+    public AlarmScheduler getAlarmScheduler() {
+        return alarmScheduler;
+    }
+
+    @NonNull
+    public ReminderNotifier getReminderNotifier() {
+        return reminderNotifier;
     }
 
     /** Reloj del sistema en la zona horaria actual (se lee en cada llamada). */
