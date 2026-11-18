@@ -3,7 +3,7 @@
 Fuente de verdad del proyecto. Toda decisión de código, UI o arquitectura debe respetar este documento. Si una petición lo contradice, se señala el conflicto antes de implementar.
 
 **Plan de trabajo:** @docs/IMPLEMENTATION_PLAN.md (9 hitos; detalle de archivos y pruebas por hito).
-**Estado actual:** Hitos 1–6 completos; Hitos 7–9 (rediseño visual) pendientes. Si se agrega un hito nuevo, actualizar esta línea al cerrarlo.
+**Estado actual:** Hitos 1–7 completos; Hitos 8–9 (rediseño visual) pendientes. Si se agrega un hito nuevo, actualizar esta línea al cerrarlo.
 **Dirección visual:** @docs/DESIGN_DIRECTION.md (apariencia). Para cualquier cambio visual: §3 es innegociable y manda sobre cualquier skill de diseño (p. ej. frontend-design, pensada para web). Si hay choque, ganar lo más estricto y avisar.
 
 ## 1. Contexto del producto

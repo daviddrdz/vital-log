@@ -2,7 +2,7 @@
 
 Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.pdf`. Al terminar cada hito la app **compila y pasa sus pruebas JVM**. Claude no usa emulador ni dispositivo: la demo en dispositivo la hace el usuario (bloques "Verificación manual").
 
-**Estado:** Hitos 1–6 completos. Hitos 7–9 (rediseño visual "Sobremesa", ver `docs/DESIGN_DIRECTION.md`) pendientes. La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
+**Estado:** Hitos 1–7 completos. Hitos 8–9 (rediseño visual "Sobremesa", ver `docs/DESIGN_DIRECTION.md`) pendientes. La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
 
 ## Decisiones globales (conflictos resueltos con CLAUDE.md)
 
@@ -92,27 +92,40 @@ Fuente de la apariencia: `docs/DESIGN_DIRECTION.md` (tokens, ratios, formas, wir
 la lógica, la navegación, los textos ni el modelo de datos, salvo lo indicado. Cada hito se cierra
 con la definición de "Hito terminado" de arriba. Las capturas a 1.0×, 1.3× y 2.0× las revisa el usuario en su dispositivo.
 
-### Hito 7 — Tokens visuales y tema
-**Objetivo:** que toda la app adopte la paleta y las formas nuevas sin tocar layouts (salvo
-referencias a tokens eliminados). Al terminar ya se ve el fondo cálido, la tinta café y el cacao.
+### Hito 7 — Tokens visuales y tema ✅
+Paleta "Sobremesa" aplicada **solo con recursos** (`colors.xml`, `dimens.xml`, `styles.xml`,
+`themes.xml`); sin cambios en layouts ni en Java. Toda la app ya usa fondo blanco cálido (#FFFAF3),
+tinta café (#2A1E14), arena (#F3ECE2) y cacao (#5A3A22). Los botones de glucosa y presión usan cobalto
+y ciruela con radio de 28dp, la alarma radio de 20dp y Subir/Bajar forma de píldora (40dp).
+El número del stepper pasó a 60sp `sans-serif-black`. Los 30 pares de color pasan `contrast.py`
+(mínimo: `status_ok`/`surface_success`, 7.31).
 
-- `colors.xml`: valores nuevos para los nombres que se conservan (`background`, `text_primary`,
-  `text_secondary`, `outline_strong`, `brand_primary`, `brand_primary_container`). Tokens nuevos:
-  `surface_sand`, `vital_glucose`, `vital_glucose_container`, `vital_pressure` y
-  `vital_pressure_container`. Se eliminan `action_*` y `surface_neutral`, actualizando sus usos
-  (`HistoryAdapter`, `ReadingCategoryStyle`/`NumericStepperView`, layouts de agenda e historial).
-- `dimens.xml`: `corner_radius_primary` 28dp, `corner_radius_alarm` 20dp, `corner_radius` 16dp (sin
-  cambio), `primary_action_height` 136dp, `secondary_action_height` 88dp, `icon_plate_size` 72dp,
-  `icon_plate_icon_size` 40dp, `greeting_icon_size` 48dp, `text_greeting` 32sp y `text_value` 56 → 60sp.
-  Se elimina `action_button_height` 120dp cuando deje de usarse (Hito 8).
-- `styles.xml`: `TextAppearance.VitalLog.Value` pasa a `sans-serif-black` y se agrega
-  `TextAppearance.VitalLog.Greeting`. `Widget.VitalLog.Button` y `.Back` pasan a `surface_sand`.
-  `Add`, `OpenSettings`, `Alarm.Snooze` y `Choice` pasan a cacao sobre arena. `Alarm` toma el radio de 20dp.
-  Se agregan los estilos de stepper `Stepper.Glucose` / `Stepper.Pressure` / `Stepper.Neutral` (píldora).
-  Los `Action.*` se conservan hasta el Hito 8, ya con los tokens nuevos.
-- `themes.xml`: mapear `colorPrimary` y `colorPrimaryContainer` a cacao/arena y `colorSurface` a `background`; elevación 0 donde aplique.
-- **Pruebas:** sin lógica nueva; `./gradlew test` debe seguir en verde. `contrast.py` de **cada** fila de la tabla de tokens.
-- **Verificación manual (usuario):** recorrer todas las pantallas a 1.0× y 2.0×: fondo cálido, sin texto gris claro y sin botones que parezcan deshabilitados.
+**Decisiones (desvíos del borrador):**
+- **Alias temporales en lugar de borrar tokens:** el hito prohibía tocar layouts y Java, así que
+  `surface_neutral` → `surface_sand`, `action_glucose_fg` → `vital_glucose`, `action_pressure_fg`
+  → `vital_pressure` y `action_agenda_fg` → `brand_primary` (cacao; los medicamentos dejan el verde
+  que chocaba con `status_ok`). Se borraron `action_*_bg` y `action_history_*` (solo los usaban estilos).
+  Los alias se eliminan en los Hitos 8–9, al actualizar `HistoryAdapter`, `NumericStepperView`,
+  `item_medication` e `item_appointment`.
+- **Recursos que solo usa el Hito 8 se crean en el Hito 8:** `Greeting`, `text_greeting`,
+  `primary_action_height`, `secondary_action_height`, `icon_plate_*`, `greeting_icon_size` y los
+  estilos `Stepper.Glucose/Pressure/Neutral`. Crearlos antes sería código muerto (§6) y avisos `UnusedResources`.
+- **Transición del dashboard:** `Action.Agenda` y `Action.History` ya son arena + cacao (radio 16), pero siguen
+  midiendo 120dp porque `activity_main.xml` fija `minHeight`; la altura de 88dp llega con el Hito 8.
+- **Stepper en el límite (transitorio):** hoy el estado normal (arena + borde cacao + signo) y el de límite
+  (arena + borde tinta, sin signo, "Máximo"/"Mínimo") solo se distinguen por el texto, el signo y el
+  borde. Con `stepperAccent` (Hito 8), el estado normal tendrá el color del signo vital y el contraste volverá a ser claro.
+- **Interlineado de 1.25 en el cuerpo:** `lineSpacingMultiplier` no se aplica desde `textAppearance`;
+  se ajusta en los layouts de los Hitos 8–9.
+- **Tema:** solo cambian los valores de los tokens (`colorPrimary` = cacao, `colorPrimaryContainer`
+  = arena, `colorSurface` = blanco cálido). Los botones M3 ya tienen elevación 0, así que no hizo falta nada más.
+
+**Verificación:** `assembleDebug test lint` en verde (134 pruebas JVM, lint con 0 errores y los
+mismos 7 avisos previos); `audit_ui.py` con 0 ERROR (2 WARN de `EditText` en nombre de
+medicamento y médico, ya justificados). Revisión estática de escala: sin `maxLines`, `ellipsize`
+ni alturas fijas en textos; los steppers van a todo lo ancho y en vertical, así que 60sp cabe a 2.0×.
+**Verificación manual (usuario):** recorrer todas las pantallas a 1.0× y 2.0×: fondo cálido, sin texto
+gris claro, sin botones que parezcan deshabilitados y con "Máximo"/"Mínimo" distinguible en los steppers.
 
 ### Hito 8 — Dashboard con saludo, captura y stepper
 **Objetivo:** jerarquía de dos niveles en el inicio, el saludo según la hora y las pantallas de captura con el acento de cada signo vital.
