@@ -16,7 +16,12 @@
     <dimen name="screen_padding">24dp</dimen>
 
     <!-- Forma de los botones -->
+    <!-- Un radio por jerarquía (docs/DESIGN_DIRECTION.md): no hay un radio único para todo. -->
     <dimen name="corner_radius">16dp</dimen>
+    <dimen name="corner_radius_alarm">20dp</dimen>
+    <dimen name="corner_radius_primary">28dp</dimen>
+    <!-- Píldora: la mitad de stepper_button_height; si el botón crece con la fuente, sigue redondeado. -->
+    <dimen name="corner_radius_pill">40dp</dimen>
     <dimen name="stroke_strong">3dp</dimen>
     <dimen name="stroke_selected">5dp</dimen>
     <dimen name="button_padding_horizontal">24dp</dimen>
@@ -34,6 +39,6 @@
     <dimen name="text_action">26sp</dimen>
     <dimen name="text_label">24sp</dimen>
     <dimen name="text_title">28sp</dimen>
-    <dimen name="text_value">56sp</dimen>
+    <dimen name="text_value">60sp</dimen>
     <dimen name="text_alarm_name">34sp</dimen>
 </resources>

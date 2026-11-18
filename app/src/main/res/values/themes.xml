@@ -2,6 +2,9 @@
     <!--
         Tema claro fijo (sin DayNight): texto oscuro sobre fondo claro sólido.
         No existe variante values-night a propósito (CLAUDE.md §3.3).
+        Paleta "Sobremesa" (docs/DESIGN_DIRECTION.md): primary = cacao, contenedor = arena,
+        superficie = blanco cálido. colorOnPrimary/colorOnError solo existen porque Material los
+        exige; la app no pinta superficies rellenas de primary ni de error.
     -->
     <style name="Base.Theme.VitalLog" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/brand_primary</item>
