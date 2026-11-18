@@ -2,7 +2,7 @@
 
 Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.pdf`. Al terminar cada hito la app **compila y pasa sus pruebas JVM**. Claude no usa emulador ni dispositivo: la demo en dispositivo la hace el usuario (bloques "Verificación manual").
 
-**Estado:** Hitos 1–7 completos. Hitos 8–9 (rediseño visual "Sobremesa", ver `docs/DESIGN_DIRECTION.md`) pendientes. La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
+**Estado:** Hitos 1–8 completos. Hito 9 (rediseño visual "Sobremesa" del resto de pantallas, ver `docs/DESIGN_DIRECTION.md`) pendiente. La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
 
 ## Decisiones globales (conflictos resueltos con CLAUDE.md)
 
@@ -127,30 +127,33 @@ ni alturas fijas en textos; los steppers van a todo lo ancho y en vertical, así
 **Verificación manual (usuario):** recorrer todas las pantallas a 1.0× y 2.0×: fondo cálido, sin texto
 gris claro, sin botones que parezcan deshabilitados y con "Máximo"/"Mínimo" distinguible en los steppers.
 
-### Hito 8 — Dashboard con saludo, captura y stepper
-**Objetivo:** jerarquía de dos niveles en el inicio, el saludo según la hora y las pantallas de captura con el acento de cada signo vital.
+### Hito 8 — Dashboard con saludo, captura y stepper ✅
+Etapa A (dashboard) aprobada con capturas del usuario; etapa B (captura) entregada.
+- **Dashboard:**
+  - Saludo según la hora con pictograma (sol naciente, sol o luna) y la fecha en palabras. Usa
+    `DayPeriod` (Java puro, 8 pruebas), `DayPeriodStyle` y `SpokenTimeFormatter.formatFullDate`.
+    Se recalcula en `onResume`, y TalkBack lo lee de una vez.
+  - Glucosa y presión: botones `Primary.*` de 136dp, radio 28 y plato `ic_plate_*` de 64dp con `iconTint` @null.
+  - Agenda e historial: botones `Secondary.*` de 88dp, arena + cacao.
+  - Se eliminan `Action.*`, `action_button_height` e `icon_action_size`. IDs y textos existentes intactos.
+- **Captura:**
+  - `app:stepperAccent` (`StepperAccent`: neutral, glucose, pressure). `NumericStepperView.renderButton`
+    solo cambia los colores; en el límite el botón pasa a `background` + `outline_strong`.
+  - Plato de 48dp junto al título con `BaseScreenActivity.getScreenIconRes()`.
+  - Interlineado de 1.25 en el texto de ayuda y en el aviso de la lectura.
+  - Se elimina el alias `surface_neutral`.
+- **Pruebas:** `DayPeriodTest` y `fullDate_isCapitalizedWithoutRelativeDay` (143 JVM en verde).
+  `DashboardNavigationTest.greeting_showsPeriodAndTodayDate`: escrita y compilada, no ejecutada.
 
-- **Java puro:** `ui/home/DayPeriod` (enum MORNING / AFTERNOON / NIGHT con `from(LocalTime)`, límites
-  5:00 / 12:00 / 19:00). En `SpokenTimeFormatter`, un método `formatFullDate(epochMillis)` para
-  "Martes 17 de noviembre" (sin "Hoy,"; reutiliza el `formatDate` interno).
-- **Dashboard (`activity_main.xml`, `MainActivity`):**
-  - Encabezado de saludo: pictograma + `txt_greeting` + `txt_today_date`. Se calcula en
-    `onResume`, para que esté al día si la app queda abierta.
-  - Dos acciones primarias: vista `view_primary_action.xml` con un `MaterialCardView` clicable de
-    radio 28 que contiene el plato y el texto. Lleva `contentDescription`, mínimo de 136dp y se
-    conservan los IDs `btn_register_glucose` / `btn_register_pressure`.
-  - Dos acciones secundarias: `MaterialButton` con estilo `Widget.VitalLog.Button.Secondary` de 88dp, conservando `btn_agenda` / `btn_history`.
-  - Strings nuevas: `greeting_morning`, `greeting_afternoon` y `greeting_night`.
-  - Drawables nuevos: `ic_greeting_morning`, `ic_greeting_afternoon`, `ic_greeting_night` y `bg_icon_plate`.
-- **Captura (`activity_glucose_entry.xml`, `activity_pressure_entry.xml`):** icono de 40dp del
-  signo vital junto al título y steppers con el acento de la pantalla.
-- **`NumericStepperView`:** atributo `stepperAccent` (glucose / pressure / neutral) en `attrs.xml`.
-  El estado de límite sigue siendo `surface_sand` + `outline_strong` + "Máximo"/"Mínimo".
-  Los steppers de hora (`view_time_steppers`) usan el acento neutral.
-- **Pruebas JVM:** `DayPeriodTest` (4:59, 5:00, 11:59, 12:00, 18:59, 19:00, medianoche) y un caso de
-  `formatFullDate` en `SpokenTimeFormatterTest`. Instrumentada (escrita, no ejecutada):
-  `DashboardNavigationTest` sigue pasando por IDs y se agrega una verificación de que el saludo es visible.
-- **Escala de fuente:** revisión estática de `view_primary_action` (texto `wrap_content`, plato centrado, sin `maxLines`).
+**Decisiones:**
+- El usuario aprobó dos cambios de Java fuera de "solo apariencia": el saludo (lógica pura nueva) y
+  `stepperAccent`. El icono del título usa la misma vía (hook de presentación en `BaseScreenActivity`).
+- El plato bajó de 72 a 64dp y el inicio usa margen lateral de 16dp, para dejar ancho al texto a 2.0×.
+- **Peso 900 sin `sans-serif-black`:** en el dispositivo del usuario `sans-serif-black` cayó al peso
+  normal. Se usa `sans-serif` + `textStyle=bold` + `textFontWeight=900` (API 28+).
+- **Límite del stepper en blanco cálido** (no arena): con el acento neutral, arena se confundía con el estado normal.
+
+**Verificación manual (usuario):** capturas de glucosa y presión a 1.0× y 2.0×: valor por defecto, "Máximo"/"Mínimo", aviso crítico y error de validación.
 
 ### Hito 9 — Resto de pantallas y cierre
 **Objetivo:** coherencia visual en todas las pantallas y auditoría final.

@@ -19,7 +19,9 @@ Sirve para algo: ubica a la persona en el día. Todo lo demás es tranquilo y di
 | Ilustración / pictogramas | Sin gradientes, alfa ni animaciones decorativas; info nunca solo por color |
 
 ## Decisiones y choques resueltos
-- **Tipografía del sistema** (`sans-serif`, `sans-serif-medium`, `sans-serif-black`), por §3.3.
+- **Tipografía del sistema** (`sans-serif` en pesos normal, medium y 900), por §3.3. El peso 900 se pide con
+  `textFontWeight=900` + `textStyle=bold` de respaldo, **no** con `sans-serif-black`: en el dispositivo del
+  usuario (fuente del fabricante) `sans-serif-black` cayó al peso normal (Hito 8, etapa A).
   Se descartó empaquetar Atkinson Hyperlegible: el usuario prefirió conservar §3.3 y la fuente que eligió en su teléfono.
 - **Los colores de acción evitan verde, ámbar y rojo**, que son exclusivos de los estados
   (`status_ok`, `status_warning`, `status_danger`). Por eso la glucosa va en cobalto y la presión en
@@ -62,14 +64,14 @@ El margen más estrecho es `status_ok`/`surface_success` (7.31). No se toca ese 
 ## Tipografía (solo fuentes del sistema, siempre en sp)
 | Estilo | Familia | Tamaño | Uso |
 |---|---|---|---|
-| `TextAppearance.VitalLog.Greeting` (nuevo) | `sans-serif-black` | 32sp | saludo del dashboard |
+| `TextAppearance.VitalLog.Greeting` | `sans-serif`, peso 900 (negrita en API 26–27) | 32sp | saludo del dashboard |
 | `TextAppearance.VitalLog.Title` | `sans-serif-medium` | 28sp | título de pantalla |
 | `TextAppearance.VitalLog.Label` | `sans-serif-medium` | 24sp | etiquetas, fecha del saludo (22sp → se sube a 24 por coherencia) |
 | botones primarios y secundarios | `sans-serif-medium` | 26sp | texto de acción |
 | `TextAppearance.VitalLog.Body` | `sans-serif` | 20sp, interlineado 1.25 | cuerpo |
-| `TextAppearance.VitalLog.Value` | `sans-serif-black` | 60sp | número del stepper |
+| `TextAppearance.VitalLog.Value` | `sans-serif`, peso 900 (negrita en API 26–27) | 60sp | número del stepper |
 
-- `sans-serif-black` **solo en ≥ 32sp**: a menor tamaño cierra los huecos de las letras.
+- Peso 900 **solo en ≥ 32sp**: a menor tamaño cierra los huecos de las letras.
 - Sin mayúsculas sostenidas (`textAllCaps=false`), sin `letterSpacing`, sin cursivas.
 - Texto alineado al inicio (izquierda). Solo se centra el número del stepper.
 
@@ -77,10 +79,10 @@ El margen más estrecho es `status_ok`/`surface_success` (7.31). No se toca ese 
 | Elemento | Alto mín. | Radio | Relleno | Borde |
 |---|---|---|---|---|
 | Acción primaria (dashboard) | 136dp | 28dp ("piedra") | `vital_*_container` | 3dp `vital_*` |
-| Plato del icono (dentro de la primaria) | 72dp, círculo | 36dp | `background` | 3dp `vital_*`, icono 40dp `vital_*` |
+| Plato del icono (dentro de la primaria) | 64dp, círculo | — | `background` | 3dp `vital_*`, icono 36dp `vital_*` (un solo vector `ic_plate_*`, `iconTint` @null) |
 | Acción secundaria (dashboard) | 88dp | 16dp | `surface_sand` | 3dp `brand_primary` (cacao), icono 32dp |
 | Guardar | 88dp | 16dp | `surface_success` | 3dp `status_ok` (sin cambio) |
-| Subir / Bajar (stepper) | 80dp | píldora (40dp) | contenedor del signo vital de la pantalla | 3dp acento del signo vital |
+| Subir / Bajar (stepper) | 80dp | píldora (40dp) | contenedor del signo vital (`stepperAccent`); en el límite, `background` | 3dp acento; en el límite, `outline_strong` |
 | Volver | 64dp | 16dp | `surface_sand` | 3dp `outline_strong` |
 | Modal de alarma (2 botones) | 96dp | 20dp | Confirmar: `surface_success`; Más tarde: `surface_sand` | 3dp |
 
@@ -97,12 +99,12 @@ El margen más estrecho es `status_ok`/`surface_success` (7.31). No se toca ese 
 ### Dashboard
 ```
 ┌────────────────────────────────┐
-│ (sol)  Buenos días             │ Greeting 32sp black · text_primary
+│ (sol)  Buenos días             │ Greeting 32sp peso 900 · text_primary
 │        Martes 17 de noviembre  │ Label · text_secondary
 │                                │ 24dp
 │ ╭────────────────────────────╮ │ vital_glucose_container · radio 28 · 136dp
 │ │ ╭────╮                     │ │ borde 3dp vital_glucose
-│ │ │gota│  Registrar glucosa  │ │ plato 72dp (background + borde cobalto)
+│ │ │gota│  Registrar glucosa  │ │ plato 64dp (background + borde cobalto)
 │ │ ╰────╯                     │ │
 │ ╰────────────────────────────╯ │ 16dp
 │ ╭────────────────────────────╮ │ vital_pressure_container
@@ -124,18 +126,22 @@ El margen más estrecho es `status_ok`/`surface_success` (7.31). No se toca ese 
 - La fecha va sin "Hoy," delante (el saludo ya lo implica): "Martes 17 de noviembre".
 - A 2.0× el texto de las primarias ocupa 2–3 líneas junto al plato: `wrap_content` + `minHeight`,
   sin `maxLines`, plato centrado en vertical, todo dentro del `ScrollView`.
+- **Ajuste del Hito 8 por ancho a 2.0×:** el plato bajó de 72 a 64dp; los botones del dashboard usan
+  rellenos de 16dp y la pantalla de inicio, margen lateral de 16dp (las demás conservan 24dp). En un
+  teléfono de 360dp esto deja ≈ 216dp al texto de las primarias y ≈ 252dp al de las secundarias, para
+  que "Registrar" y "medicamentos" no se partan a la mitad. Se confirma con capturas a 2.0×.
 
 ### Captura de glucosa (la de presión es igual, con ciruela)
 ```
 ┌────────────────────────────────┐
 │ [← Volver]                     │ surface_sand · 64dp
-│ (gota) Registrar glucosa       │ Title, icono 40dp cobalto
+│ (gota) Registrar glucosa       │ Title + plato 48dp (el del inicio)
 │                                │
 │ Azúcar en la sangre            │ Label
 │ ╭────────────────────────────╮ │ píldora · vital_glucose_container · 80dp
 │ │         +  Subir           │ │
 │ ╰────────────────────────────╯ │
-│              118               │ Value 60sp black · text_primary
+│              118               │ Value 60sp peso 900 · text_primary
 │             mg/dL              │ Body · text_secondary
 │ ╭────────────────────────────╮ │
 │ │         −  Bajar           │ │
@@ -148,8 +154,10 @@ El margen más estrecho es `status_ok`/`surface_success` (7.31). No se toca ese 
 ```
 - El acento del signo vital acompaña a la persona desde el inicio hasta su pantalla: el icono del título y los steppers.
   Es solo un refuerzo; el título con texto es lo que ubica.
-- En los límites, el stepper sigue cambiando a `surface_sand` + `outline_strong` con el texto "Máximo" o
-  "Mínimo" (colores sólidos, nunca opacidad).
+- Subir/Bajar toman el acento con `app:stepperAccent` (`glucose`, `pressure`; `neutral` = arena + cacao
+  para hora, dosis y fecha). En el límite cambian a `background` (blanco cálido) + borde `outline_strong`,
+  sin signo y con el texto "Máximo" o "Mínimo": se distingue por relleno, signo y texto, no solo por color.
+- El plato junto al título lo pone `BaseScreenActivity.getScreenIconRes()` (decorativo para TalkBack).
 
 ## Anti-patrones (no hacer)
 - Cuatro botones iguales de colores pastel; tarjetas idénticas con el mismo radio.
@@ -157,7 +165,7 @@ El margen más estrecho es `status_ok`/`surface_success` (7.31). No se toca ese 
 - Mayúsculas en etiquetas, letras espaciadas, rótulos encima de cada bloque, "→" pegado al texto.
 - Sombras, degradados, transparencias o animación decorativa. Solo se conserva la animación del banner de guardado (Hito 6).
 - Texto secundario gris claro o "apagado" para restarle importancia: lo secundario se marca con tamaño, nunca con contraste.
-- `sans-serif-black` por debajo de 32sp; `maxLines` o `ellipsize` en cualquier texto.
+- Peso 900 por debajo de 32sp; `sans-serif-black` (no existe en todas las fuentes); `maxLines` o `ellipsize`.
 - Colores hex literales en layouts o Java; todo sale de `colors.xml`.
 
 ## Criterios de aceptación
