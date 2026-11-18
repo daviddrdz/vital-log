@@ -236,7 +236,21 @@ Las pruebas siguen la misma estructura de paquetes:
 
 ---
 
-### Hito 5 — Orquestador de alarmas y modal a pantalla completa
+### Hito 5 — Orquestador de alarmas y modal a pantalla completa ✅ Completado
+
+> **Progreso**
+> - [x] T1 — Lógica pura: `NextTriggerCalculator`, `ReminderRequestCodes`, `ReminderPolicy` (+ `ReminderType`) y sus pruebas JVM.
+> - [x] T2 — `AlarmScheduler` conectado a los repositorios (vía la interfaz `ReminderScheduler`) + `BootReceiver`. `ReminderReceiver` ya programa la toma del día siguiente.
+>
+> **Decisiones de implementación**
+> - Respaldo cuando falta el permiso de alarmas exactas: `setAndAllowWhileIdle` (aproximada). `setExactAndAllowWhileIdle` necesita el mismo permiso que `setAlarmClock`, así que no sirve como respaldo. `BootReceiver` también escucha `SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED` y reprograma todo como exacto en cuanto se concede.
+> - Los repositorios programan o cancelan la alarma en la misma tarea de fondo que guarda o borra, así la base de datos y las alarmas no se desincronizan.
+> - "Ya lo tomé" desde la notificación abre el modal (PendingIntent de Activity), que registra la toma y muestra banner + tono, así se cumple §3.4. Desde un `BroadcastReceiver` no habría retroalimentación visible. `ReminderActionReceiver` solo maneja "Recordar más tarde" y "Entendido", que no guardan nada.
+> - En el modal de cita, el texto de la hora se oculta: "Fecha y hora" ya lo dice.
+> - `FullScreenAlarmActivityTest` usa la base de datos de la app (el singleton de `VitalLogApp`) y no una en memoria. Cada prueba trabaja solo con el medicamento que inserta.
+> - [x] T3 — `ReminderReceiver`, `ReminderNotifier` (canal de alarma) y `ReminderActionReceiver` ("Recordar más tarde" / "Entendido"). `Reminder` + `ReminderIntents` llevan tipo, id y hora programada.
+> - [x] T4 — `FullScreenAlarmActivity` + `AlarmViewModel` + Full-Screen Intent en la notificación. `FullScreenAlarmActivityTest` escrita y compilada, no ejecutada.
+> - [x] T5 — `AlarmPermissionChecker` + `PermissionsGuideActivity` (se abre al entrar a la agenda si falta algún permiso; al volver de ajustes muestra el siguiente o se cierra).
 
 **Entregables**
 - Manifiesto:
