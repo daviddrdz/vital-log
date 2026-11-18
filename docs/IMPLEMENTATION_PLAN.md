@@ -1,8 +1,8 @@
-# VitalLog — Plan de implementación (6 hitos)
+# VitalLog — Plan de implementación (9 hitos)
 
 Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.pdf`. Al terminar cada hito la app **compila y pasa sus pruebas JVM**. Claude no usa emulador ni dispositivo: la demo en dispositivo la hace el usuario (bloques "Verificación manual").
 
-**Estado:** Hitos 1–6 completos (plan terminado). La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
+**Estado:** Hitos 1–6 completos. Hitos 7–9 (rediseño visual "Sobremesa", ver `docs/DESIGN_DIRECTION.md`) pendientes. La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
 
 ## Decisiones globales (conflictos resueltos con CLAUDE.md)
 
@@ -83,3 +83,74 @@ Room v1 (5 entidades, 5 DAOs, `exportSchema` con `app/schemas/` versionado), sin
 - **Profundidad de navegación**: los formularios de medicamento y cita son un paso de la tarea que siempre regresa a la agenda; no cuentan como sección nueva.
 - **Ahorro de batería agresivo de fabricantes**: fuera de alcance; solo se usa `setAlarmClock`.
 - **Fuera de alcance**: exportar a PDF, borrar lecturas desde el historial, red o sincronización (prohibidas por CLAUDE.md) y el dial rotativo.
+
+---
+
+## Rediseño visual "Sobremesa" (Hitos 7–9)
+
+Fuente de la apariencia: `docs/DESIGN_DIRECTION.md` (tokens, ratios, formas, wireframes). No cambia
+la lógica, la navegación, los textos ni el modelo de datos, salvo lo indicado. Cada hito se cierra
+con la definición de "Hito terminado" de arriba. Las capturas a 1.0×, 1.3× y 2.0× las revisa el usuario en su dispositivo.
+
+### Hito 7 — Tokens visuales y tema
+**Objetivo:** que toda la app adopte la paleta y las formas nuevas sin tocar layouts (salvo
+referencias a tokens eliminados). Al terminar ya se ve el fondo cálido, la tinta café y el cacao.
+
+- `colors.xml`: valores nuevos para los nombres que se conservan (`background`, `text_primary`,
+  `text_secondary`, `outline_strong`, `brand_primary`, `brand_primary_container`). Tokens nuevos:
+  `surface_sand`, `vital_glucose`, `vital_glucose_container`, `vital_pressure` y
+  `vital_pressure_container`. Se eliminan `action_*` y `surface_neutral`, actualizando sus usos
+  (`HistoryAdapter`, `ReadingCategoryStyle`/`NumericStepperView`, layouts de agenda e historial).
+- `dimens.xml`: `corner_radius_primary` 28dp, `corner_radius_alarm` 20dp, `corner_radius` 16dp (sin
+  cambio), `primary_action_height` 136dp, `secondary_action_height` 88dp, `icon_plate_size` 72dp,
+  `icon_plate_icon_size` 40dp, `greeting_icon_size` 48dp, `text_greeting` 32sp y `text_value` 56 → 60sp.
+  Se elimina `action_button_height` 120dp cuando deje de usarse (Hito 8).
+- `styles.xml`: `TextAppearance.VitalLog.Value` pasa a `sans-serif-black` y se agrega
+  `TextAppearance.VitalLog.Greeting`. `Widget.VitalLog.Button` y `.Back` pasan a `surface_sand`.
+  `Add`, `OpenSettings`, `Alarm.Snooze` y `Choice` pasan a cacao sobre arena. `Alarm` toma el radio de 20dp.
+  Se agregan los estilos de stepper `Stepper.Glucose` / `Stepper.Pressure` / `Stepper.Neutral` (píldora).
+  Los `Action.*` se conservan hasta el Hito 8, ya con los tokens nuevos.
+- `themes.xml`: mapear `colorPrimary` y `colorPrimaryContainer` a cacao/arena y `colorSurface` a `background`; elevación 0 donde aplique.
+- **Pruebas:** sin lógica nueva; `./gradlew test` debe seguir en verde. `contrast.py` de **cada** fila de la tabla de tokens.
+- **Verificación manual (usuario):** recorrer todas las pantallas a 1.0× y 2.0×: fondo cálido, sin texto gris claro y sin botones que parezcan deshabilitados.
+
+### Hito 8 — Dashboard con saludo, captura y stepper
+**Objetivo:** jerarquía de dos niveles en el inicio, el saludo según la hora y las pantallas de captura con el acento de cada signo vital.
+
+- **Java puro:** `ui/home/DayPeriod` (enum MORNING / AFTERNOON / NIGHT con `from(LocalTime)`, límites
+  5:00 / 12:00 / 19:00). En `SpokenTimeFormatter`, un método `formatFullDate(epochMillis)` para
+  "Martes 17 de noviembre" (sin "Hoy,"; reutiliza el `formatDate` interno).
+- **Dashboard (`activity_main.xml`, `MainActivity`):**
+  - Encabezado de saludo: pictograma + `txt_greeting` + `txt_today_date`. Se calcula en
+    `onResume`, para que esté al día si la app queda abierta.
+  - Dos acciones primarias: vista `view_primary_action.xml` con un `MaterialCardView` clicable de
+    radio 28 que contiene el plato y el texto. Lleva `contentDescription`, mínimo de 136dp y se
+    conservan los IDs `btn_register_glucose` / `btn_register_pressure`.
+  - Dos acciones secundarias: `MaterialButton` con estilo `Widget.VitalLog.Button.Secondary` de 88dp, conservando `btn_agenda` / `btn_history`.
+  - Strings nuevas: `greeting_morning`, `greeting_afternoon` y `greeting_night`.
+  - Drawables nuevos: `ic_greeting_morning`, `ic_greeting_afternoon`, `ic_greeting_night` y `bg_icon_plate`.
+- **Captura (`activity_glucose_entry.xml`, `activity_pressure_entry.xml`):** icono de 40dp del
+  signo vital junto al título y steppers con el acento de la pantalla.
+- **`NumericStepperView`:** atributo `stepperAccent` (glucose / pressure / neutral) en `attrs.xml`.
+  El estado de límite sigue siendo `surface_sand` + `outline_strong` + "Máximo"/"Mínimo".
+  Los steppers de hora (`view_time_steppers`) usan el acento neutral.
+- **Pruebas JVM:** `DayPeriodTest` (4:59, 5:00, 11:59, 12:00, 18:59, 19:00, medianoche) y un caso de
+  `formatFullDate` en `SpokenTimeFormatterTest`. Instrumentada (escrita, no ejecutada):
+  `DashboardNavigationTest` sigue pasando por IDs y se agrega una verificación de que el saludo es visible.
+- **Escala de fuente:** revisión estática de `view_primary_action` (texto `wrap_content`, plato centrado, sin `maxLines`).
+
+### Hito 9 — Resto de pantallas y cierre
+**Objetivo:** coherencia visual en todas las pantallas y auditoría final.
+
+- **Modal de alarma (`activity_full_screen_alarm.xml`):** siguen siendo **exactamente 2 botones** de ≥ 96dp,
+  ahora con radio de 20dp. "Ya lo tomé"/"Entendido" en verde de éxito; "Recordar más tarde" en arena + cacao.
+  El pictograma del medicamento o de la cita va en cacao.
+- **Agenda, formularios, historial y permisos:** tarjetas `item_*` en blanco cálido con borde
+  `outline_strong` y radio 16. En el historial, los iconos de glucosa y presión usan `vital_*` y los de
+  medicamento, cacao (antes verde, que chocaba con `status_ok`). Los campos de texto van en blanco con borde tinta.
+- **Banner de feedback y diálogo de borrado:** solo cambian tokens; las animaciones, la duración y los tonos se quedan como están.
+- Eliminar los estilos `Action.*` y los dimens o drawables que queden sin uso (sin código muerto).
+- **Cierre:** lista de comprobación final de la skill auditora, con la tabla regla → estado; revisión
+  estática de escala de todas las pantallas; actualizar "Estado actual" en CLAUDE.md y el resumen de los Hitos 7–9 aquí.
+- **Verificación manual (usuario):** flujo completo a 1.0×, 1.3× y 2.0× (registrar glucosa y presión,
+  agregar un medicamento, disparar un recordatorio, ver el historial).
