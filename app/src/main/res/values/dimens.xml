@@ -25,6 +25,8 @@
     <dimen name="icon_action_size">56dp</dimen>
     <dimen name="icon_feedback_size">48dp</dimen>
     <dimen name="icon_padding">12dp</dimen>
+    <dimen name="alarm_pictogram_size">160dp</dimen>
+    <dimen name="permission_pictogram_size">96dp</dimen>
 
     <!-- Tipografía (siempre sp): cuerpo 18–20sp, títulos ≥ 24sp, valores ≥ 48sp -->
     <dimen name="text_body">20sp</dimen>
@@ -33,4 +35,5 @@
     <dimen name="text_label">24sp</dimen>
     <dimen name="text_title">28sp</dimen>
     <dimen name="text_value">56sp</dimen>
+    <dimen name="text_alarm_name">34sp</dimen>
 </resources>

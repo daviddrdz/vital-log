@@ -90,6 +90,40 @@
         <item name="iconGravity">textStart</item>
     </style>
 
+    <!-- Botones del modal de alarma: a todo lo ancho, ≥ 96dp, icono + texto grande. -->
+    <style name="Widget.VitalLog.Button.Alarm">
+        <item name="android:minHeight">@dimen/alarm_button_height</item>
+        <item name="android:textSize">@dimen/text_action</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <!-- "Ya lo tomé" / "Entendido": verde claro sólido, borde y check verde oscuro. -->
+    <style name="Widget.VitalLog.Button.Alarm.Confirm">
+        <item name="backgroundTint">@color/surface_success</item>
+        <item name="strokeColor">@color/status_ok</item>
+        <item name="iconTint">@color/status_ok</item>
+        <item name="icon">@drawable/ic_check</item>
+    </style>
+
+    <!-- "Recordar más tarde": azul claro sólido, borde y reloj azul oscuro. -->
+    <style name="Widget.VitalLog.Button.Alarm.Snooze">
+        <item name="backgroundTint">@color/brand_primary_container</item>
+        <item name="strokeColor">@color/brand_primary</item>
+        <item name="iconTint">@color/brand_primary</item>
+        <item name="icon">@drawable/ic_snooze</item>
+    </style>
+
+    <!-- "Abrir ajustes" (guía de permisos): azul claro sólido con engrane azul oscuro, ≥ 88dp. -->
+    <style name="Widget.VitalLog.Button.OpenSettings">
+        <item name="android:minHeight">@dimen/primary_button_height</item>
+        <item name="android:textSize">@dimen/text_action</item>
+        <item name="backgroundTint">@color/brand_primary_container</item>
+        <item name="strokeColor">@color/brand_primary</item>
+        <item name="iconTint">@color/brand_primary</item>
+        <item name="icon">@drawable/ic_settings</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
     <!-- "Agregar medicamento" / "Agregar cita": azul claro sólido con borde e icono azul oscuro. -->
     <style name="Widget.VitalLog.Button.Add">
         <item name="android:minHeight">@dimen/primary_button_height</item>

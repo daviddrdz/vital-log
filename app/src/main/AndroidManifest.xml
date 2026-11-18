@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Recordatorios exactos de medicamentos y citas (Hito 5). -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
     <application
         android:name=".VitalLogApp"
         android:allowBackup="false"
@@ -49,6 +57,45 @@
             android:exported="false"
             android:label="@string/title_appointment_form"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
+            android:name=".ui.permissions.PermissionsGuideActivity"
+            android:exported="false"
+            android:label="@string/title_permissions_guide" />
+
+        <!-- Modal de alarma: tarea propia (no trae al frente el resto de la app al cerrarse),
+             se muestra sobre la pantalla de bloqueo y enciende la pantalla. -->
+        <activity
+            android:name=".ui.alarm.FullScreenAlarmActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:label="@string/alarm_heading_medication"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:taskAffinity=""
+            android:turnScreenOn="true"
+            tools:targetApi="27" />
+
+        <receiver
+            android:name=".alarms.ReminderReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".alarms.ReminderActionReceiver"
+            android:exported="false" />
+
+        <!-- Exportado solo para recibir estas difusiones protegidas del sistema. -->
+        <receiver
+            android:name=".alarms.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

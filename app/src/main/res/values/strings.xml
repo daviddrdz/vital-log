@@ -173,4 +173,32 @@
         <item quantity="many">minutos</item>
         <item quantity="other">minutos</item>
     </plurals>
+
+    <!-- Recordatorios (notificación de alarma) -->
+    <string name="reminder_channel_name">Recordatorios de medicamentos y citas</string>
+    <string name="reminder_channel_description">Suena como una alarma a la hora de tu medicamento y antes de tu cita.</string>
+    <string name="reminder_medication_text">Toma %1$d %2$s. Hora: %3$s</string>
+    <string name="reminder_appointment_title">Cita: %1$s</string>
+    <string name="reminder_appointment_text">Fecha y hora: %1$s</string>
+    <string name="reminder_action_understood">Entendido</string>
+    <string name="reminder_action_snooze">Recordar más tarde</string>
+
+    <!-- Modal de alarma a pantalla completa -->
+    <string name="alarm_heading_medication">Es hora de tu medicamento</string>
+    <string name="alarm_heading_appointment">Tienes una cita médica</string>
+    <string name="alarm_pictogram_medication">Medicamento</string>
+    <string name="alarm_pictogram_appointment">Cita médica</string>
+    <string name="alarm_btn_taken">Ya lo tomé</string>
+    <string name="saved_dose">Guardado: tomaste %1$s, %2$s</string>
+
+    <!-- Guía de permisos de los recordatorios -->
+    <string name="title_permissions_guide">Activar recordatorios</string>
+    <string name="btn_open_settings">Abrir ajustes</string>
+    <string name="permission_return_hint">Cuando termines, regresa a VitalLog con el botón Atrás de tu teléfono.</string>
+    <string name="permission_notifications_title">Permite los avisos</string>
+    <string name="permission_notifications_body">Para avisarte cuando sea hora de tu medicamento o de tu cita, VitalLog necesita mostrar avisos. Toca \"Abrir ajustes\" y activa los avisos de VitalLog.</string>
+    <string name="permission_exact_alarms_title">Permite las alarmas a la hora exacta</string>
+    <string name="permission_exact_alarms_body">Así el aviso suena justo a la hora de tu medicamento. Toca \"Abrir ajustes\" y activa la opción de alarmas y recordatorios para VitalLog.</string>
+    <string name="permission_full_screen_title">Permite el aviso en toda la pantalla</string>
+    <string name="permission_full_screen_body">Así el recordatorio aparece en grande aunque tu teléfono esté bloqueado. Toca \"Abrir ajustes\" y activa esta opción para VitalLog.</string>
 </resources>

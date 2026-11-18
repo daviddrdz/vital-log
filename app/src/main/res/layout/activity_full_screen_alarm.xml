@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Modal de alarma: fondo claro sólido (windowBackground del tema), pictograma grande, nombre ≥ 32sp y exactamente 2 botones
+    apilados a todo lo ancho (≥ 96dp, separados 24dp). Sin "Volver": el botón Atrás del sistema
+    cierra el modal y la notificación sigue activa. El banner va fuera del ScrollView para que
+    siempre se vea al guardar.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/screen_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.alarm.FullScreenAlarmActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
+
+            <ImageView
+                android:id="@+id/img_alarm_pictogram"
+                android:layout_width="@dimen/alarm_pictogram_size"
+                android:layout_height="@dimen/alarm_pictogram_size"
+                android:contentDescription="@string/alarm_pictogram_medication"
+                android:src="@drawable/ic_medication"
+                app:tint="@color/brand_primary" />
+
+            <TextView
+                android:id="@+id/txt_alarm_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:accessibilityHeading="true"
+                android:gravity="center_horizontal"
+                android:text="@string/alarm_heading_medication"
+                android:textAppearance="@style/TextAppearance.VitalLog.Title"
+                tools:targetApi="28" />
+
+            <TextView
+                android:id="@+id/txt_alarm_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center_horizontal"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_alarm_name"
+                tools:text="Metformina" />
+
+            <TextView
+                android:id="@+id/txt_alarm_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.VitalLog.Label"
+                tools:text="Dosis: 1 tableta" />
+
+            <TextView
+                android:id="@+id/txt_alarm_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.VitalLog.Label"
+                tools:text="Hora: 8:30 de la mañana" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_alarm_confirm"
+                style="@style/Widget.VitalLog.Button.Alarm.Confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:minWidth="@dimen/touch_target"
+                android:minHeight="@dimen/alarm_button_height"
+                android:text="@string/alarm_btn_taken" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_alarm_snooze"
+                style="@style/Widget.VitalLog.Button.Alarm.Snooze"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:minWidth="@dimen/touch_target"
+                android:minHeight="@dimen/alarm_button_height"
+                android:text="@string/reminder_action_snooze" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.davidrdz.vitallog.feedback.FeedbackBannerView
+        android:id="@+id/feedback_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginBottom="@dimen/spacing_medium" />
+</LinearLayout>
