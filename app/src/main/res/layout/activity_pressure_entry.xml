@@ -32,12 +32,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
-                android:lineSpacingMultiplier="1.2"
+                android:lineSpacingMultiplier="1.25"
                 android:text="@string/body_pressure_entry"
                 android:textAppearance="@style/TextAppearance.VitalLog.Body" />
 
             <com.davidrdz.vitallog.ui.widget.NumericStepperView
                 android:id="@+id/stepper_systolic"
+                app:stepperAccent="pressure"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_large"
@@ -45,6 +46,7 @@
 
             <com.davidrdz.vitallog.ui.widget.NumericStepperView
                 android:id="@+id/stepper_diastolic"
+                app:stepperAccent="pressure"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_large"

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sol alto con rayos: saludo de la tarde (12:00–18:59). Trazo grueso redondeado. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:autoMirrored="false">
+    <path
+        android:fillColor="@color/text_primary"
+        android:pathData="M12,7.5a4.5,4.5 0,1 1,0 9a4.5,4.5 0,1 1,0 -9z" />
+    <path
+        android:pathData="M12,2.5v2.5M12,19v2.5M2.5,12h2.5M19,12h2.5M5.28,5.28L7.05,7.05M16.95,16.95L18.72,18.72M5.28,18.72L7.05,16.95M16.95,7.05L18.72,5.28"
+        android:strokeWidth="2"
+        android:strokeColor="@color/text_primary"
+        android:strokeLineCap="round" />
+</vector>

@@ -154,6 +154,15 @@ public class SpokenTimeFormatterTest {
                 FORMATTER.formatDayHeading(millis(2026, 11, 16, 23, 59), justAfterMidnight));
     }
 
+    // ===== Fecha del saludo (dashboard) =====
+
+    @Test
+    public void fullDate_isCapitalizedWithoutRelativeDay() {
+        assertEquals("Martes 17 de noviembre", FORMATTER.formatFullDate(NOW));
+        assertEquals("Miércoles 18 de noviembre",
+                FORMATTER.formatFullDate(millis(2026, 11, 18, 0, 0)));
+    }
+
     @Test
     public void dayWithDate_addsDateToRelativeDay() {
         assertEquals("mañana, miércoles 18 de noviembre",

@@ -3,5 +3,11 @@
     <!-- Control numérico +/−: el rótulo se da en XML; límites y unidad llegan desde Java con bind(). -->
     <declare-styleable name="NumericStepperView">
         <attr name="stepperLabel" format="string" />
+        <!-- Color de Subir/Bajar (StepperAccent): el orden de los valores es el del enum Java. -->
+        <attr name="stepperAccent" format="enum">
+            <enum name="neutral" value="0" />
+            <enum name="glucose" value="1" />
+            <enum name="pressure" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

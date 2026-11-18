@@ -64,6 +64,7 @@ public class NumericStepperView extends LinearLayout {
     private final MaterialButton increaseButton;
     private final MaterialButton decreaseButton;
     private final CharSequence label;
+    private final StepperAccent accent;
     private final AccelerationPolicy acceleration = new AccelerationPolicy();
     private final RepeatTouchListener increaseRepeater;
     private final RepeatTouchListener decreaseRepeater;
@@ -97,6 +98,8 @@ public class NumericStepperView extends LinearLayout {
         final TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.NumericStepperView, defStyleAttr, 0);
         final CharSequence declaredLabel = a.getText(R.styleable.NumericStepperView_stepperLabel);
+        accent = StepperAccent.fromAttr(a.getInt(R.styleable.NumericStepperView_stepperAccent,
+                StepperAccent.NEUTRAL.ordinal()));
         a.recycle();
         label = declaredLabel == null ? "" : declaredLabel;
 
@@ -236,8 +239,10 @@ public class NumericStepperView extends LinearLayout {
     }
 
     /**
-     * En el límite el botón dice "Máximo"/"Mínimo" con fondo neutro sólido. Sigue habilitado a
-     * propósito: el estado deshabilitado de Material reduce la opacidad (prohibido por §3.3).
+     * Estado normal: relleno y borde del acento de la pantalla, con signo + / −. En el límite el
+     * botón dice "Máximo"/"Mínimo", sin signo, en blanco cálido con borde tinta: así se distingue
+     * del estado normal sin depender solo del color. Sigue habilitado a propósito: el estado
+     * deshabilitado de Material reduce la opacidad (prohibido por §3.3).
      */
     private void renderButton(final MaterialButton button, final boolean atLimit,
                               @StringRes final int text, @StringRes final int limitText,
@@ -248,9 +253,9 @@ public class NumericStepperView extends LinearLayout {
         button.setContentDescription(
                 getResources().getString(atLimit ? limitDescription : description, label));
         button.setIconResource(atLimit ? 0 : icon);
-        button.setBackgroundTintList(colors(atLimit
-                ? R.color.surface_neutral : R.color.brand_primary_container));
-        button.setStrokeColor(colors(atLimit ? R.color.outline_strong : R.color.brand_primary));
+        button.setIconTint(colors(accent.accent));
+        button.setBackgroundTintList(colors(atLimit ? R.color.background : accent.container));
+        button.setStrokeColor(colors(atLimit ? R.color.outline_strong : accent.accent));
     }
 
     private ColorStateList colors(@ColorRes final int color) {

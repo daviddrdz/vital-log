@@ -7,6 +7,8 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertTrue;
 
 import android.util.TypedValue;
@@ -41,6 +43,14 @@ public class DashboardNavigationTest {
             onView(withId(id)).perform(scrollTo()).check(matches(isDisplayed()));
             onView(withId(id)).check(hasMinimumTouchSize());
         }
+    }
+
+    @Test
+    public void greeting_showsPeriodAndTodayDate() {
+        onView(withId(R.id.txt_greeting)).check(matches(isDisplayed()))
+                .check(matches(withText(not(isEmptyOrNullString()))));
+        onView(withId(R.id.txt_today_date)).check(matches(isDisplayed()))
+                .check(matches(withText(not(isEmptyOrNullString()))));
     }
 
     @Test

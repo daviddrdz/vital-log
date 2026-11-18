@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ===== Tipografía ===== -->
+
+    <!-- Saludo del dashboard, peso 900 (solo porque text_greeting ≥ 32sp). No se usa
+         sans-serif-black: si la fuente del fabricante no lo trae, Android cae al peso normal
+         (visto en dispositivo). textFontWeight elige el peso más cercano que exista (API 28+);
+         en API 26–27 queda la negrita de textStyle. -->
+    <style name="TextAppearance.VitalLog.Greeting" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">@dimen/text_greeting</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textFontWeight" tools:targetApi="p">900</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
 
     <style name="TextAppearance.VitalLog.Title" parent="TextAppearance.Material3.HeadlineSmall">
         <item name="android:textSize">@dimen/text_title</item>
@@ -21,11 +33,13 @@
         <item name="android:textColor">@color/text_primary</item>
     </style>
 
-    <!-- Número del control: sans-serif-black solo porque text_value ≥ 32sp (a menor tamaño
-         el peso black cierra los huecos de las letras). -->
+    <!-- Número del control, peso 900 solo porque text_value ≥ 32sp (a menor tamaño el peso
+         900 cierra los huecos de las letras). Misma técnica que Greeting. -->
     <style name="TextAppearance.VitalLog.Value" parent="TextAppearance.Material3.DisplayMedium">
         <item name="android:textSize">@dimen/text_value</item>
-        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textFontWeight" tools:targetApi="p">900</item>
         <item name="android:textColor">@color/text_primary</item>
     </style>
 
@@ -61,17 +75,63 @@
         <item name="iconGravity">textStart</item>
     </style>
 
-    <!-- Acción masiva del dashboard: icono grande arriba, texto grande abajo. -->
-    <style name="Widget.VitalLog.Button.Action">
-        <item name="android:minHeight">@dimen/action_button_height</item>
+    <!-- Acción primaria del dashboard (uso diario): "piedra" de radio 28dp y ≥ 136dp; plato
+         circular a la izquierda y texto alineado al inicio. El plato trae sus propios colores
+         (iconTint @null). Rellenos de 16dp para dejar al texto todo el ancho posible a 2.0×. -->
+    <style name="Widget.VitalLog.Button.Primary">
+        <item name="android:minHeight">@dimen/primary_action_height</item>
         <item name="android:textSize">@dimen/text_action</item>
-        <item name="iconGravity">top</item>
-        <item name="iconSize">@dimen/icon_action_size</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:paddingStart">@dimen/spacing_medium</item>
+        <item name="android:paddingEnd">@dimen/spacing_medium</item>
+        <item name="iconGravity">start</item>
+        <item name="iconSize">@dimen/icon_plate_size</item>
+        <item name="iconPadding">@dimen/spacing_medium</item>
+        <item name="iconTint">@null</item>
+        <item name="cornerRadius">@dimen/corner_radius_primary</item>
+    </style>
+
+    <style name="Widget.VitalLog.Button.Primary.Glucose">
+        <item name="backgroundTint">@color/vital_glucose_container</item>
+        <item name="strokeColor">@color/vital_glucose</item>
+        <item name="icon">@drawable/ic_plate_glucose</item>
+    </style>
+
+    <style name="Widget.VitalLog.Button.Primary.Pressure">
+        <item name="backgroundTint">@color/vital_pressure_container</item>
+        <item name="strokeColor">@color/vital_pressure</item>
+        <item name="icon">@drawable/ic_plate_pressure</item>
+    </style>
+
+    <!-- Acción secundaria del dashboard: arena con borde e icono cacao, radio 16dp, ≥ 88dp.
+         Texto en tinta completa (nunca gris): menos prominente no significa deshabilitada. -->
+    <style name="Widget.VitalLog.Button.Secondary">
+        <item name="android:minHeight">@dimen/secondary_action_height</item>
+        <item name="android:textSize">@dimen/text_action</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:paddingStart">@dimen/spacing_medium</item>
+        <item name="android:paddingEnd">@dimen/spacing_medium</item>
+        <item name="backgroundTint">@color/surface_sand</item>
+        <item name="strokeColor">@color/brand_primary</item>
+        <item name="iconTint">@color/brand_primary</item>
+        <item name="iconGravity">start</item>
+        <item name="iconPadding">@dimen/icon_padding</item>
+    </style>
+
+    <style name="Widget.VitalLog.Button.Secondary.Agenda">
+        <item name="icon">@drawable/ic_medication</item>
+    </style>
+
+    <style name="Widget.VitalLog.Button.Secondary.History">
+        <item name="icon">@drawable/ic_history</item>
     </style>
 
     <!-- Botones Subir / Bajar del control numérico: píldora a todo lo ancho, ≥ 80dp, signo + texto.
-         Al llegar a un límite, NumericStepperView cambia a surface_neutral + outline_strong,
-         quita el signo y muestra "Máximo"/"Mínimo" (colores sólidos, nunca opacidad reducida). -->
+         NumericStepperView pinta el acento de la pantalla (app:stepperAccent; aquí, el neutro).
+         En el límite cambia a background + outline_strong, quita el signo y muestra
+         "Máximo"/"Mínimo" (colores sólidos, nunca opacidad reducida). -->
     <style name="Widget.VitalLog.Button.Stepper">
         <item name="android:minHeight">@dimen/stepper_button_height</item>
         <item name="android:textSize">@dimen/text_action</item>
@@ -175,36 +235,4 @@
         <item name="android:textColor">@color/status_danger</item>
     </style>
 
-    <!-- Acciones del dashboard (transición hasta el Hito 8, que las reemplaza por
-         acciones primarias/secundarias). Signos vitales: contenedor + acento, radio 28dp.
-         Agenda e historial: arena + cacao, radio 16dp. -->
-    <style name="Widget.VitalLog.Button.Action.Glucose">
-        <item name="backgroundTint">@color/vital_glucose_container</item>
-        <item name="strokeColor">@color/vital_glucose</item>
-        <item name="iconTint">@color/vital_glucose</item>
-        <item name="icon">@drawable/ic_glucose_drop</item>
-        <item name="cornerRadius">@dimen/corner_radius_primary</item>
-    </style>
-
-    <style name="Widget.VitalLog.Button.Action.Pressure">
-        <item name="backgroundTint">@color/vital_pressure_container</item>
-        <item name="strokeColor">@color/vital_pressure</item>
-        <item name="iconTint">@color/vital_pressure</item>
-        <item name="icon">@drawable/ic_pressure_heart</item>
-        <item name="cornerRadius">@dimen/corner_radius_primary</item>
-    </style>
-
-    <style name="Widget.VitalLog.Button.Action.Agenda">
-        <item name="backgroundTint">@color/surface_sand</item>
-        <item name="strokeColor">@color/brand_primary</item>
-        <item name="iconTint">@color/brand_primary</item>
-        <item name="icon">@drawable/ic_medication</item>
-    </style>
-
-    <style name="Widget.VitalLog.Button.Action.History">
-        <item name="backgroundTint">@color/surface_sand</item>
-        <item name="strokeColor">@color/brand_primary</item>
-        <item name="iconTint">@color/brand_primary</item>
-        <item name="icon">@drawable/ic_history</item>
-    </style>
 </resources>

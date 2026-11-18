@@ -86,4 +86,10 @@ public class GlucoseEntryActivity extends BaseScreenActivity {
     protected int getScreenTitleRes() {
         return R.string.title_glucose_entry;
     }
+
+    /** El mismo plato del botón del inicio: continuidad visual hasta esta pantalla. */
+    @Override
+    protected int getScreenIconRes() {
+        return R.drawable.ic_plate_glucose;
+    }
 }

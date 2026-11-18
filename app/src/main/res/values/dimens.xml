@@ -4,7 +4,9 @@
     <!-- Áreas táctiles: mínimo 60dp, ideal ≥ 64dp -->
     <dimen name="touch_target_min">60dp</dimen>
     <dimen name="touch_target">64dp</dimen>
-    <dimen name="action_button_height">120dp</dimen>
+    <!-- Dashboard: acción primaria (uso diario) y secundaria -->
+    <dimen name="primary_action_height">136dp</dimen>
+    <dimen name="secondary_action_height">88dp</dimen>
     <dimen name="alarm_button_height">96dp</dimen>
     <dimen name="stepper_button_height">80dp</dimen>
     <dimen name="primary_button_height">88dp</dimen>
@@ -27,9 +29,13 @@
     <dimen name="button_padding_horizontal">24dp</dimen>
     <dimen name="button_padding_vertical">16dp</dimen>
     <dimen name="icon_size">32dp</dimen>
-    <dimen name="icon_action_size">56dp</dimen>
     <dimen name="icon_feedback_size">48dp</dimen>
     <dimen name="icon_padding">12dp</dimen>
+    <!-- Plato circular del icono de las acciones primarias (el icono va dentro, a 36dp) -->
+    <dimen name="icon_plate_size">64dp</dimen>
+    <dimen name="greeting_icon_size">48dp</dimen>
+    <!-- Plato del signo vital junto al título de su pantalla de captura -->
+    <dimen name="title_icon_size">48dp</dimen>
     <dimen name="alarm_pictogram_size">160dp</dimen>
     <dimen name="permission_pictogram_size">96dp</dimen>
 
@@ -39,6 +45,7 @@
     <dimen name="text_action">26sp</dimen>
     <dimen name="text_label">24sp</dimen>
     <dimen name="text_title">28sp</dimen>
+    <dimen name="text_greeting">32sp</dimen>
     <dimen name="text_value">60sp</dimen>
     <dimen name="text_alarm_name">34sp</dimen>
 </resources>

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Dashboard principal: navegación 100% plana (CLAUDE.md §3.2).
-    Cuatro acciones masivas a todo lo ancho; ScrollView para que funcione con escala de fuente 2.0×.
+    Dashboard principal "Sobremesa": navegación 100% plana (CLAUDE.md §3.2).
+    1. Saludo según la hora + fecha en palabras (lo asigna MainActivity en onResume).
+    2. Dos acciones primarias de uso diario (glucosa, presión): altas, rellenas, con plato circular.
+    3. Dos acciones secundarias (agenda, historial): más bajas, arena con borde cacao.
+    Relleno lateral de 16dp (no 24) para dejar más ancho al texto con escala de fuente 2.0×.
+    ScrollView para que todo siga alcanzable con fuente grande.
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,12 +19,55 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/screen_padding">
+        android:paddingHorizontal="@dimen/spacing_medium"
+        android:paddingVertical="@dimen/screen_padding">
+
+        <!-- Saludo: TalkBack lo lee de una vez ("Buenos días, Martes 17 de noviembre").
+             El pictograma es decorativo: el texto ya dice la parte del día. -->
+        <LinearLayout
+            android:id="@+id/layout_greeting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:screenReaderFocusable="true"
+            tools:targetApi="p">
+
+            <ImageView
+                android:id="@+id/img_greeting"
+                android:layout_width="@dimen/greeting_icon_size"
+                android:layout_height="@dimen/greeting_icon_size"
+                android:importantForAccessibility="no"
+                tools:src="@drawable/ic_greeting_morning" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_medium"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_greeting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Greeting"
+                    tools:text="@string/greeting_morning" />
+
+                <TextView
+                    android:id="@+id/txt_today_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Label"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/txt_dashboard_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
             android:accessibilityHeading="true"
             android:text="@string/dashboard_title"
             android:textAppearance="@style/TextAppearance.VitalLog.Title"
@@ -31,44 +78,46 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_touch"
-            android:lineSpacingMultiplier="1.2"
+            android:lineSpacingMultiplier="1.25"
             android:text="@string/dashboard_hint"
             android:textAppearance="@style/TextAppearance.VitalLog.Body" />
 
+        <!-- Acciones primarias (uso diario) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_register_glucose"
-            style="@style/Widget.VitalLog.Button.Action.Glucose"
+            style="@style/Widget.VitalLog.Button.Primary.Glucose"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"
-            android:minHeight="@dimen/action_button_height"
+            android:minHeight="@dimen/primary_action_height"
             android:text="@string/action_register_glucose" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_register_pressure"
-            style="@style/Widget.VitalLog.Button.Action.Pressure"
+            style="@style/Widget.VitalLog.Button.Primary.Pressure"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:minHeight="@dimen/action_button_height"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:minHeight="@dimen/primary_action_height"
             android:text="@string/action_register_pressure" />
 
+        <!-- Acciones secundarias -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_agenda"
-            style="@style/Widget.VitalLog.Button.Action.Agenda"
+            style="@style/Widget.VitalLog.Button.Secondary.Agenda"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"
-            android:minHeight="@dimen/action_button_height"
+            android:minHeight="@dimen/secondary_action_height"
             android:text="@string/action_agenda" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_history"
-            style="@style/Widget.VitalLog.Button.Action.History"
+            style="@style/Widget.VitalLog.Button.Secondary.History"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:minHeight="@dimen/action_button_height"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:minHeight="@dimen/secondary_action_height"
             android:text="@string/action_history" />
     </LinearLayout>
 </ScrollView>

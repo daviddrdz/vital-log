@@ -27,9 +27,8 @@
     <color name="vital_pressure">#FF6B1E5A</color>
     <color name="vital_pressure_container">#FFF4E4F0</color>
 
-    <!-- Alias temporales: los usan layouts y Java que se actualizan en los Hitos 8–9.
+    <!-- Alias temporales: los usan HistoryAdapter, item_medication e item_appointment (Hito 9).
          Se eliminan cuando nadie los referencie. -->
-    <color name="surface_neutral">@color/surface_sand</color>
     <color name="action_glucose_fg">@color/vital_glucose</color>
     <color name="action_pressure_fg">@color/vital_pressure</color>
     <color name="action_agenda_fg">@color/brand_primary</color>

@@ -151,7 +151,17 @@ public final class SpokenTimeFormatter {
      */
     @NonNull
     public String formatDayHeading(final long epochMillis, final long nowMillis) {
-        final String text = formatDayWithDate(epochMillis, nowMillis);
+        return capitalize(formatDayWithDate(epochMillis, nowMillis));
+    }
+
+    /** Fecha completa con mayúscula inicial y sin "hoy": "Martes 17 de noviembre" (saludo). */
+    @NonNull
+    public String formatFullDate(final long epochMillis) {
+        return capitalize(formatDate(epochMillis));
+    }
+
+    @NonNull
+    private static String capitalize(@NonNull final String text) {
         return text.substring(0, 1).toUpperCase(LOCALE) + text.substring(1);
     }
 
