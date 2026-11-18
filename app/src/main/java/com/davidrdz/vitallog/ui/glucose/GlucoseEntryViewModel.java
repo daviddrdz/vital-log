@@ -6,14 +6,19 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.davidrdz.vitallog.analytics.ReadingClassifier;
 import com.davidrdz.vitallog.data.entity.GlucoseReading;
 import com.davidrdz.vitallog.data.repository.SaveResult;
 import com.davidrdz.vitallog.data.repository.VitalsRepository;
 import com.davidrdz.vitallog.ui.common.Event;
+import com.davidrdz.vitallog.ui.common.ReadingStatus;
 
 import java.time.Clock;
 
-/** Estado de la pantalla de glucosa: valor inicial (última lectura) y guardado. */
+/**
+ * Estado de la pantalla de glucosa: valor inicial (última lectura), categoría informativa del
+ * valor que se está ajustando y guardado (validado por el repositorio).
+ */
 public final class GlucoseEntryViewModel extends ViewModel {
 
     @NonNull
@@ -24,6 +29,7 @@ public final class GlucoseEntryViewModel extends ViewModel {
     private final LiveData<Event<Integer>> initialValue;
     private final MutableLiveData<Event<SaveResult<GlucoseReading>>> saveEvents =
             new MutableLiveData<>();
+    private final MutableLiveData<ReadingStatus> status = new MutableLiveData<>();
     private boolean saving;
 
     public GlucoseEntryViewModel(@NonNull final VitalsRepository repository,
@@ -48,7 +54,22 @@ public final class GlucoseEntryViewModel extends ViewModel {
         return saveEvents;
     }
 
-    /** Guarda la lectura con la hora actual; ignora toques repetidos mientras guarda. */
+    /** Categoría del valor que muestra el control (texto + icono + color en la UI). */
+    @NonNull
+    public LiveData<ReadingStatus> getStatus() {
+        return status;
+    }
+
+    /** Recalcula la categoría cada vez que cambia el control. */
+    public void onValueChanged(final int valueMgDl) {
+        status.setValue(ReadingStatus.of(ReadingStatus.Measure.GLUCOSE,
+                ReadingClassifier.classifyGlucose(valueMgDl)));
+    }
+
+    /**
+     * Guarda la lectura con la hora actual; ignora toques repetidos mientras guarda. El
+     * repositorio la rechaza si es imposible; un valor alarmante pero posible sí se guarda.
+     */
     public void save(final int valueMgDl) {
         if (saving) {
             return;

@@ -43,6 +43,12 @@
                 android:layout_marginTop="@dimen/spacing_large"
                 app:stepperLabel="@string/stepper_label_glucose" />
 
+            <com.davidrdz.vitallog.ui.widget.ReadingStatusView
+                android:id="@+id/view_glucose_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save_glucose"
                 style="@style/Widget.VitalLog.Button.Save"
