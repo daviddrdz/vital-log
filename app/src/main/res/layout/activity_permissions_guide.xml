@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Un permiso por pantalla: pictograma, título, explicación llana y un solo botón "Abrir ajustes". -->
+<!-- Un permiso por pantalla: plato con pictograma, título, explicación llana y un solo botón
+     "Abrir ajustes". Todo alineado al inicio, como el resto de la app. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -17,12 +18,14 @@
 
         <include layout="@layout/view_screen_header" />
 
+        <!-- Plato arena con borde cacao, como el del modal de alarma; el icono lo pone Java. -->
         <ImageView
             android:id="@+id/img_permission_pictogram"
             android:layout_width="@dimen/permission_pictogram_size"
             android:layout_height="@dimen/permission_pictogram_size"
-            android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/spacing_large"
+            android:background="@drawable/bg_plate_brand"
+            android:padding="@dimen/permission_pictogram_padding"
             android:contentDescription="@string/permission_notifications_title"
             android:src="@drawable/ic_notifications"
             app:tint="@color/brand_primary" />
@@ -40,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_touch"
-            android:lineSpacingMultiplier="1.2"
+            android:lineSpacingMultiplier="1.25"
             android:text="@string/permission_notifications_body"
             android:textAppearance="@style/TextAppearance.VitalLog.Body" />
 
@@ -59,7 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_medium"
-            android:lineSpacingMultiplier="1.2"
+            android:lineSpacingMultiplier="1.25"
             android:text="@string/permission_return_hint"
             android:textAppearance="@style/TextAppearance.VitalLog.Body" />
     </LinearLayout>

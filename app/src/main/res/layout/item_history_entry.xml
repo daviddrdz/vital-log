@@ -80,8 +80,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_touch"
             android:layout_weight="1"
-            android:fontFamily="sans-serif-medium"
             android:textAppearance="@style/TextAppearance.VitalLog.Body"
+            android:textStyle="bold"
             tools:text="@string/category_glucose_normal" />
     </LinearLayout>
 </LinearLayout>

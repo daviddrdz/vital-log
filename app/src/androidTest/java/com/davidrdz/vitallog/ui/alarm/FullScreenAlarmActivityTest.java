@@ -2,7 +2,6 @@ package com.davidrdz.vitallog.ui.alarm;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -88,7 +87,8 @@ public class FullScreenAlarmActivityTest {
         try (ActivityScenario<FullScreenAlarmActivity> ignored =
                      ActivityScenario.launch(medicationIntent())) {
             onView(withId(R.id.txt_alarm_name)).check(matches(isDisplayed()));
-            onView(withId(R.id.btn_alarm_confirm)).perform(scrollTo(), click());
+            // Los botones están fijos al pie, fuera del ScrollView: siempre visibles sin desplazar.
+            onView(withId(R.id.btn_alarm_confirm)).check(matches(isDisplayed())).perform(click());
 
             final DoseLog log = awaitDoseLog();
             assertEquals(medicationId, log.getMedicationId());

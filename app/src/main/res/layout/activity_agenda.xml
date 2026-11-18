@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    "Mis medicamentos y citas": dos listas con su botón de agregar. Las listas son RecyclerView sin
-    scroll propio dentro de un NestedScrollView (pocas filas; todo se desplaza junto).
-    El banner de confirmación va al pie, fuera del scroll, para que siempre se vea.
+    "Mis medicamentos y citas": dos grupos (medicamentos y citas), cada uno con encabezado + icono
+    cacao, su lista de tarjetas y su botón de agregar. Entre grupos hay 40dp; dentro, 12dp.
+    Las listas son RecyclerView sin scroll propio dentro de un NestedScrollView (pocas filas; todo
+    se desplaza junto). El banner de confirmación va al pie, fuera del scroll, para que siempre se vea.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -33,26 +34,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
-                android:lineSpacingMultiplier="1.2"
+                android:lineSpacingMultiplier="1.25"
                 android:text="@string/body_agenda"
                 android:textAppearance="@style/TextAppearance.VitalLog.Body" />
 
-            <!-- Medicamentos -->
-            <TextView
-                android:id="@+id/txt_medications_title"
+            <!-- Medicamentos: el icono es decorativo (el título ya lo dice) -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_large"
-                android:accessibilityHeading="true"
-                android:text="@string/agenda_medications_title"
-                android:textAppearance="@style/TextAppearance.VitalLog.Title"
-                tools:targetApi="p" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_medication"
+                    app:tint="@color/brand_primary" />
+
+                <TextView
+                    android:id="@+id/txt_medications_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_touch"
+                    android:layout_weight="1"
+                    android:accessibilityHeading="true"
+                    android:text="@string/agenda_medications_title"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Title"
+                    tools:targetApi="p" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/txt_medications_empty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_touch"
+                android:lineSpacingMultiplier="1.25"
                 android:text="@string/agenda_medications_empty"
                 android:textAppearance="@style/TextAppearance.VitalLog.Body" />
 
@@ -75,22 +94,40 @@
                 android:minHeight="@dimen/primary_button_height"
                 android:text="@string/btn_add_medication" />
 
-            <!-- Citas -->
-            <TextView
-                android:id="@+id/txt_appointments_title"
+            <!-- Citas: el icono es decorativo (el título ya lo dice) -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_large"
-                android:accessibilityHeading="true"
-                android:text="@string/agenda_appointments_title"
-                android:textAppearance="@style/TextAppearance.VitalLog.Title"
-                tools:targetApi="p" />
+                android:layout_marginTop="@dimen/spacing_section"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/brand_primary" />
+
+                <TextView
+                    android:id="@+id/txt_appointments_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_touch"
+                    android:layout_weight="1"
+                    android:accessibilityHeading="true"
+                    android:text="@string/agenda_appointments_title"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Title"
+                    tools:targetApi="p" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/txt_appointments_empty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_touch"
+                android:lineSpacingMultiplier="1.25"
                 android:text="@string/agenda_appointments_empty"
                 android:textAppearance="@style/TextAppearance.VitalLog.Body" />
 

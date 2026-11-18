@@ -13,6 +13,10 @@
     <color name="text_secondary">#FF4A3B2E</color>
     <color name="outline_strong">#FF2A1E14</color>
 
+    <!-- Relleno de los campos de texto (nombre, médico o lugar): blanco puro con borde tinta, para que
+         se distinga del fondo como "lugar donde se escribe" -->
+    <color name="surface_field">#FFFFFFFF</color>
+
     <!-- Superficie arena: botones secundarios, "Volver" y acciones generales -->
     <color name="surface_sand">#FFF3ECE2</color>
 
@@ -26,12 +30,6 @@
     <color name="vital_glucose_container">#FFE2E8FA</color>
     <color name="vital_pressure">#FF6B1E5A</color>
     <color name="vital_pressure_container">#FFF4E4F0</color>
-
-    <!-- Alias temporales: los usan HistoryAdapter, item_medication e item_appointment (Hito 9).
-         Se eliminan cuando nadie los referencie. -->
-    <color name="action_glucose_fg">@color/vital_glucose</color>
-    <color name="action_pressure_fg">@color/vital_pressure</color>
-    <color name="action_agenda_fg">@color/brand_primary</color>
 
     <!-- Estados de lectura (siempre acompañados de texto, nunca solo color) -->
     <color name="status_ok">#FF0B5A23</color>

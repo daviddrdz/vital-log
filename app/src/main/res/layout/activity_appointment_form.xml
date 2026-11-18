@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_medium"
-            android:lineSpacingMultiplier="1.2"
+            android:lineSpacingMultiplier="1.25"
             android:text="@string/body_appointment_form"
             android:textAppearance="@style/TextAppearance.VitalLog.Body" />
 
@@ -64,7 +64,7 @@
             android:id="@+id/stepper_days"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_large"
+            android:layout_marginTop="@dimen/spacing_section"
             app:stepperLabel="@string/stepper_label_days" />
 
         <TextView

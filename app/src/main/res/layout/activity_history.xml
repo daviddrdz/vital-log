@@ -5,6 +5,7 @@
     dentro del NestedScrollView, así todo se desplaza junto y funciona con escala de fuente 2.0×.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/screen_root"
     android:layout_width="match_parent"
@@ -31,11 +32,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
-                android:lineSpacingMultiplier="1.2"
+                android:lineSpacingMultiplier="1.25"
                 android:text="@string/body_history"
                 android:textAppearance="@style/TextAppearance.VitalLog.Body" />
 
-            <!-- Periodo: dos opciones a todo lo ancho; la elegida lleva check y fondo azul claro -->
+            <!-- Periodo: dos opciones a todo lo ancho; la elegida lleva check, borde cacao grueso y fondo arena -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_period_7"
                 style="@style/Widget.VitalLog.Button.Choice"
@@ -56,7 +57,8 @@
                 android:minHeight="@dimen/touch_target"
                 android:text="@string/history_period_30" />
 
-            <!-- Resumen del periodo -->
+            <!-- Resumen del periodo: cada medida con su icono (cobalto, ciruela o cacao), el mismo de
+                 las filas de abajo. Los iconos son decorativos: el subtítulo ya dice qué es. -->
             <TextView
                 android:id="@+id/txt_summary_title"
                 android:layout_width="match_parent"
@@ -76,53 +78,104 @@
                 android:orientation="vertical"
                 android:padding="@dimen/spacing_medium">
 
-                <TextView
-                    android:id="@+id/txt_summary_glucose_title"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/history_summary_glucose_title"
-                    android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_glucose_drop"
+                        app:tint="@color/vital_glucose" />
+
+                    <TextView
+                        android:id="@+id/txt_summary_glucose_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_touch"
+                        android:layout_weight="1"
+                        android:text="@string/history_summary_glucose_title"
+                        android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txt_summary_glucose"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_touch"
-                    android:lineSpacingMultiplier="1.2"
+                    android:lineSpacingMultiplier="1.25"
                     android:textAppearance="@style/TextAppearance.VitalLog.Body"
                     tools:text="@string/history_no_readings" />
 
-                <TextView
-                    android:id="@+id/txt_summary_pressure_title"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_large"
-                    android:text="@string/history_summary_pressure_title"
-                    android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_pressure_heart"
+                        app:tint="@color/vital_pressure" />
+
+                    <TextView
+                        android:id="@+id/txt_summary_pressure_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_touch"
+                        android:layout_weight="1"
+                        android:text="@string/history_summary_pressure_title"
+                        android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txt_summary_pressure"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_touch"
-                    android:lineSpacingMultiplier="1.2"
+                    android:lineSpacingMultiplier="1.25"
                     android:textAppearance="@style/TextAppearance.VitalLog.Body"
                     tools:text="@string/history_no_readings" />
 
-                <TextView
-                    android:id="@+id/txt_summary_doses_title"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_large"
-                    android:text="@string/history_summary_doses_title"
-                    android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_medication"
+                        app:tint="@color/brand_primary" />
+
+                    <TextView
+                        android:id="@+id/txt_summary_doses_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_touch"
+                        android:layout_weight="1"
+                        android:text="@string/history_summary_doses_title"
+                        android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txt_summary_doses"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_touch"
-                    android:lineSpacingMultiplier="1.2"
+                    android:lineSpacingMultiplier="1.25"
                     android:textAppearance="@style/TextAppearance.VitalLog.Body"
                     tools:text="@string/history_no_doses" />
             </LinearLayout>
@@ -143,7 +196,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_touch"
-                android:lineSpacingMultiplier="1.2"
+                android:lineSpacingMultiplier="1.25"
                 android:text="@string/history_empty"
                 android:textAppearance="@style/TextAppearance.VitalLog.Body"
                 android:visibility="gone" />

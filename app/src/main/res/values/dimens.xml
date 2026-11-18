@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Dimensiones de accesibilidad gerontológica (CLAUDE.md §3.3). -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Áreas táctiles: mínimo 60dp, ideal ≥ 64dp -->
-    <dimen name="touch_target_min">60dp</dimen>
+    <!-- Mínimo absoluto de CLAUDE.md §3.3. Ningún layout lo usa (todos usan touch_target, 64dp),
+         pero es el valor de referencia que citan CLAUDE.md, la skill auditora y audit_ui.py. -->
+    <dimen name="touch_target_min" tools:ignore="UnusedResources">60dp</dimen>
     <dimen name="touch_target">64dp</dimen>
     <!-- Dashboard: acción primaria (uso diario) y secundaria -->
     <dimen name="primary_action_height">136dp</dimen>
@@ -16,6 +18,8 @@
     <dimen name="spacing_medium">16dp</dimen>
     <dimen name="spacing_large">24dp</dimen>
     <dimen name="screen_padding">24dp</dimen>
+    <!-- Entre dos grupos de una pantalla (p. ej. medicamentos y citas): más que dentro de un grupo -->
+    <dimen name="spacing_section">40dp</dimen>
 
     <!-- Forma de los botones -->
     <!-- Un radio por jerarquía (docs/DESIGN_DIRECTION.md): no hay un radio único para todo. -->
@@ -36,8 +40,12 @@
     <dimen name="greeting_icon_size">48dp</dimen>
     <!-- Plato del signo vital junto al título de su pantalla de captura -->
     <dimen name="title_icon_size">48dp</dimen>
-    <dimen name="alarm_pictogram_size">160dp</dimen>
+    <!-- Plato del modal de alarma: el icono queda de 88dp (128 − 2 × 20) dentro del círculo -->
+    <dimen name="alarm_pictogram_size">128dp</dimen>
+    <dimen name="alarm_pictogram_padding">20dp</dimen>
+    <!-- Plato de la guía de permisos: el icono queda de 64dp (96 − 2 × 16) -->
     <dimen name="permission_pictogram_size">96dp</dimen>
+    <dimen name="permission_pictogram_padding">16dp</dimen>
 
     <!-- Tipografía (siempre sp): cuerpo 18–20sp, títulos ≥ 24sp, valores ≥ 48sp -->
     <dimen name="text_body">20sp</dimen>

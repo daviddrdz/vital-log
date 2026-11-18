@@ -29,7 +29,30 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
 
+        <!-- Sin tinte de elevación de Material 3: una superficie del mismo color que colorSurface
+             (p. ej. "Sí, borrar" en blanco cálido, dentro del diálogo) puede teñirse de cacao según
+             su elevación. La app separa superficies con bordes sólidos, nunca con sombras ni tintes. -->
+        <item name="elevationOverlayEnabled">false</item>
         <item name="materialButtonStyle">@style/Widget.VitalLog.Button</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.VitalLog.Dialog</item>
+    </style>
+
+    <!-- Diálogos (confirmación de borrado): blanco cálido sólido y radio 20 como el modal de
+         alarma (nivel "modal"). El tinte de elevación ya está apagado en el tema base. -->
+    <style name="ThemeOverlay.VitalLog.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="alertDialogStyle">@style/MaterialAlertDialog.VitalLog</item>
+        <item name="colorSurface">@color/background</item>
+    </style>
+
+    <style name="MaterialAlertDialog.VitalLog" parent="MaterialAlertDialog.Material3">
+        <item name="backgroundTint">@color/background</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.VitalLog.Dialog</item>
+        <item name="shapeAppearanceOverlay">@null</item>
+    </style>
+
+    <style name="ShapeAppearance.VitalLog.Dialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/corner_radius_alarm</item>
     </style>
 
     <style name="Theme.VitalLog" parent="Base.Theme.VitalLog" />

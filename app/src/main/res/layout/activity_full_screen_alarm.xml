@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Modal de alarma: fondo claro sólido (windowBackground del tema), pictograma grande, nombre ≥ 32sp y exactamente 2 botones
-    apilados a todo lo ancho (≥ 96dp, separados 24dp). Sin "Volver": el botón Atrás del sistema
-    cierra el modal y la notificación sigue activa. El banner va fuera del ScrollView para que
-    siempre se vea al guardar.
+    Modal de alarma: fondo claro sólido (windowBackground del tema). Arriba, la información (plato con
+    el pictograma, aviso, nombre y detalle), alineada al inicio y desplazable con fuente grande.
+    Abajo, fijos fuera del ScrollView, exactamente 2 botones apilados a todo lo ancho (≥ 96dp,
+    separados 24dp): siempre a la vista sin tener que desplazarse, aunque la fuente esté a 2.0×.
+    Sin "Volver": el botón Atrás del sistema cierra el modal y la notificación sigue activa.
+    El banner va al pie para que siempre se vea al guardar.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,15 +25,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="@dimen/screen_padding">
+            android:paddingHorizontal="@dimen/screen_padding"
+            android:paddingTop="@dimen/screen_padding"
+            android:paddingBottom="@dimen/spacing_medium">
 
+            <!-- Plato arena con borde cacao; el icono (medicamento o calendario) lo pone Java. -->
             <ImageView
                 android:id="@+id/img_alarm_pictogram"
                 android:layout_width="@dimen/alarm_pictogram_size"
                 android:layout_height="@dimen/alarm_pictogram_size"
+                android:background="@drawable/bg_plate_brand"
                 android:contentDescription="@string/alarm_pictogram_medication"
+                android:padding="@dimen/alarm_pictogram_padding"
                 android:src="@drawable/ic_medication"
                 app:tint="@color/brand_primary" />
 
@@ -39,22 +45,21 @@
                 android:id="@+id/txt_alarm_heading"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_medium"
+                android:layout_marginTop="@dimen/spacing_large"
                 android:accessibilityHeading="true"
-                android:gravity="center_horizontal"
                 android:text="@string/alarm_heading_medication"
                 android:textAppearance="@style/TextAppearance.VitalLog.Title"
                 tools:targetApi="28" />
 
+            <!-- Lo más importante de la pantalla: peso 900 (≥ 32sp). Los nombres largos se parten
+                 en líneas con guion, nunca se recortan. -->
             <TextView
                 android:id="@+id/txt_alarm_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_medium"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center_horizontal"
-                android:textColor="@color/text_primary"
-                android:textSize="@dimen/text_alarm_name"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:hyphenationFrequency="normal"
+                android:textAppearance="@style/TextAppearance.VitalLog.AlarmName"
                 tools:text="Metformina" />
 
             <TextView
@@ -62,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
-                android:gravity="center_horizontal"
+                android:lineSpacingMultiplier="1.25"
                 android:textAppearance="@style/TextAppearance.VitalLog.Label"
                 tools:text="Dosis: 1 tableta" />
 
@@ -71,31 +76,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_touch"
-                android:gravity="center_horizontal"
+                android:lineSpacingMultiplier="1.25"
                 android:textAppearance="@style/TextAppearance.VitalLog.Label"
                 tools:text="Hora: 8:30 de la mañana" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_alarm_confirm"
-                style="@style/Widget.VitalLog.Button.Alarm.Confirm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_large"
-                android:minWidth="@dimen/touch_target"
-                android:minHeight="@dimen/alarm_button_height"
-                android:text="@string/alarm_btn_taken" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_alarm_snooze"
-                style="@style/Widget.VitalLog.Button.Alarm.Snooze"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_large"
-                android:minWidth="@dimen/touch_target"
-                android:minHeight="@dimen/alarm_button_height"
-                android:text="@string/reminder_action_snooze" />
         </LinearLayout>
     </ScrollView>
+
+    <!-- Exactamente 2 botones, fijos al pie: confirmar (verde de éxito) arriba, posponer (arena) abajo. -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_alarm_confirm"
+        style="@style/Widget.VitalLog.Button.Alarm.Confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginTop="@dimen/spacing_medium"
+        android:minWidth="@dimen/touch_target"
+        android:minHeight="@dimen/alarm_button_height"
+        android:text="@string/alarm_btn_taken" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_alarm_snooze"
+        style="@style/Widget.VitalLog.Button.Alarm.Snooze"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginTop="@dimen/spacing_large"
+        android:layout_marginBottom="@dimen/screen_padding"
+        android:minWidth="@dimen/touch_target"
+        android:minHeight="@dimen/alarm_button_height"
+        android:text="@string/reminder_action_snooze" />
 
     <com.davidrdz.vitallog.feedback.FeedbackBannerView
         android:id="@+id/feedback_banner"

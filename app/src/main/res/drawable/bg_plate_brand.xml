@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Plato circular de un pictograma general (modal de alarma, guía de permisos): arena sólida con
+    borde cacao de 3dp. El icono va encima en cacao (app:tint), con el relleno de la ImageView como margen.
+    Mismo lenguaje que los platos de glucosa y presión del inicio, en el color de las acciones generales.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/surface_sand" />
+    <stroke
+        android:width="@dimen/stroke_strong"
+        android:color="@color/brand_primary" />
+</shape>

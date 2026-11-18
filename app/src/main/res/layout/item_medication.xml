@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Fila de la agenda: tarjeta con nombre, dos líneas de detalle y botón visible "Borrar". -->
+<!--
+    Fila de la agenda: tarjeta blanco cálido con borde tinta y radio 16, con nombre, dosis, hora y un
+    botón visible "Borrar". El icono del medicamento va en el encabezado de la sección, no en cada
+    tarjeta, para dejar todo el ancho al nombre con fuente 2.0× (se parte con guion, nunca se recorta).
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,11 +17,8 @@
         android:id="@+id/txt_medication_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawablePadding="@dimen/icon_padding"
-        android:gravity="center_vertical"
+        android:hyphenationFrequency="normal"
         android:textAppearance="@style/TextAppearance.VitalLog.Label"
-        app:drawableStartCompat="@drawable/ic_medication"
-        app:drawableTint="@color/action_agenda_fg"
         tools:text="Metformina" />
 
     <TextView

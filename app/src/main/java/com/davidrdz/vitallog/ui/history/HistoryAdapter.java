@@ -83,7 +83,7 @@ final class HistoryAdapter extends ListAdapter<HistoryItem, RecyclerView.ViewHol
                 formatter.formatTime(item.getTakenAt())));
         switch (item.getKind()) {
             case GLUCOSE:
-                bindType(holder, R.drawable.ic_glucose_drop, R.color.action_glucose_fg,
+                bindType(holder, R.drawable.ic_glucose_drop, R.color.vital_glucose,
                         R.string.history_type_glucose);
                 holder.value.setText(res.getString(R.string.history_value_glucose,
                         item.getValue(), res.getString(VitalUnitLabels.shortLabel(
@@ -95,7 +95,7 @@ final class HistoryAdapter extends ListAdapter<HistoryItem, RecyclerView.ViewHol
                         Objects.requireNonNull(item.getCategory()));
                 break;
             case BLOOD_PRESSURE:
-                bindType(holder, R.drawable.ic_pressure_heart, R.color.action_pressure_fg,
+                bindType(holder, R.drawable.ic_pressure_heart, R.color.vital_pressure,
                         R.string.history_type_pressure);
                 holder.value.setText(res.getString(R.string.history_value_pressure,
                         item.getValue(), item.getSecondValue(),
@@ -108,7 +108,7 @@ final class HistoryAdapter extends ListAdapter<HistoryItem, RecyclerView.ViewHol
                         Objects.requireNonNull(item.getCategory()));
                 break;
             case DOSE:
-                bindType(holder, R.drawable.ic_medication, R.color.action_agenda_fg,
+                bindType(holder, R.drawable.ic_medication, R.color.brand_primary,
                         R.string.history_type_dose);
                 final DoseUnit unit = Objects.requireNonNull(item.getDoseUnit());
                 holder.value.setText(res.getString(R.string.history_value_dose,

@@ -7,8 +7,9 @@ import com.google.android.material.button.MaterialButton;
 
 /**
  * Pinta un botón de opción ({@code Widget.VitalLog.Button.Choice}): la opción elegida lleva check,
- * borde grueso azul y fondo azul claro; las demás, fondo blanco y borde normal. Colores sólidos,
- * nunca opacidad; TalkBack la anuncia como marcada.
+ * borde cacao grueso y fondo arena; las demás, fondo blanco cálido y borde tinta normal. Colores
+ * sólidos, nunca opacidad; la elegida también se distingue por el check y el grosor del borde.
+ * TalkBack la anuncia como marcada.
  */
 public final class ChoiceButtonStyle {
 
