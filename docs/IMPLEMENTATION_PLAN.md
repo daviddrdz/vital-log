@@ -202,7 +202,13 @@ Las pruebas siguen la misma estructura de paquetes:
 
 ---
 
-### Hito 4 — Gestor analítico de validación
+### Hito 4 — Gestor analítico de validación ✅ Completado
+
+> **Decisiones de implementación** (ambigüedades resueltas con la opción más simple):
+> - El aviso de rango crítico se muestra **en vivo** debajo del control (`ReadingStatusView`), antes de tocar "Guardar". No hay un diálogo de confirmación extra, así que guardar sigue siendo un solo toque.
+> - El control de presión **no** limita la sistólica a diastólica + 10 en vivo. Así se puede capturar exactamente lo que marca el aparato, y la verificación 90/85 → error se puede reproducir. Mientras los números no cuadran, el recuadro dice qué revisar.
+> - La presión se clasifica empezando por la categoría más grave (gana el número más preocupante: 150/55 → alta). "Elevada" solo aplica a la presión.
+> - El aviso en lenguaje llano solo aparece en "muy alta" (CRITICAL), como dice el plan. El azúcar baja (< 70) se muestra con texto + icono + color, pero sin aviso adicional.
 
 **Entregables**
 - `ClinicalRangeValidator` (Java puro, usa `VitalRanges`): `validateGlucose(int)` y `validateBloodPressure(int systolic, int diastolic)` devuelven un `ValidationResult` con un `ValidationError`: `GLUCOSE_TOO_LOW`, `GLUCOSE_TOO_HIGH`, `SYSTOLIC_TOO_LOW`, `SYSTOLIC_TOO_HIGH`, `DIASTOLIC_TOO_LOW`, `DIASTOLIC_TOO_HIGH`, `SYSTOLIC_NOT_ABOVE_DIASTOLIC`, `PULSE_PRESSURE_TOO_NARROW`.
