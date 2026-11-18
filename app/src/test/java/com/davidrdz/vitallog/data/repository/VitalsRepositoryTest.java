@@ -1,11 +1,15 @@
 package com.davidrdz.vitallog.data.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import androidx.lifecycle.LiveData;
 
+import com.davidrdz.vitallog.analytics.ValidationError;
 import com.davidrdz.vitallog.data.db.BloodPressureReadingDao;
 import com.davidrdz.vitallog.data.db.GlucoseReadingDao;
 import com.davidrdz.vitallog.data.entity.BloodPressureReading;
@@ -61,6 +65,86 @@ public class VitalsRepositoryTest {
         assertEquals(130, saved.getSystolic());
         assertEquals(85, saved.getDiastolic());
         assertEquals(TAKEN_AT, saved.getTakenAt());
+    }
+
+    @Test
+    public void saveGlucose_success_hasNoError() {
+        final List<SaveResult<GlucoseReading>> results = new ArrayList<>();
+
+        repository.saveGlucose(new GlucoseReading(0, 320, TAKEN_AT), results::add);
+
+        assertTrue("Un valor alarmante pero posible se guarda", results.get(0).isSuccess());
+        assertNull(results.get(0).getError());
+        assertEquals(1, glucoseDao.inserted.size());
+    }
+
+    @Test
+    public void saveGlucose_outOfRange_neverReachesDao_andReturnsReason() {
+        final List<SaveResult<GlucoseReading>> results = new ArrayList<>();
+
+        repository.saveGlucose(new GlucoseReading(0, 19, TAKEN_AT), results::add);
+        repository.saveGlucose(new GlucoseReading(0, 601, TAKEN_AT), results::add);
+
+        assertEquals(0, glucoseDao.inserted.size());
+        assertEquals(2, results.size());
+        assertFalse(results.get(0).isSuccess());
+        assertSame(ValidationError.GLUCOSE_TOO_LOW, results.get(0).getError());
+        assertSame(ValidationError.GLUCOSE_TOO_HIGH, results.get(1).getError());
+    }
+
+    @Test
+    public void saveBloodPressure_systolicNotAboveDiastolic_neverReachesDao() {
+        final List<SaveResult<BloodPressureReading>> results = new ArrayList<>();
+
+        repository.saveBloodPressure(new BloodPressureReading(0, 80, 90, TAKEN_AT), results::add);
+
+        assertEquals(0, pressureDao.inserted.size());
+        assertSame(ValidationError.SYSTOLIC_NOT_ABOVE_DIASTOLIC, results.get(0).getError());
+    }
+
+    @Test
+    public void saveBloodPressure_narrowPulsePressure_neverReachesDao() {
+        final List<SaveResult<BloodPressureReading>> results = new ArrayList<>();
+
+        repository.saveBloodPressure(new BloodPressureReading(0, 90, 85, TAKEN_AT), results::add);
+
+        assertEquals(0, pressureDao.inserted.size());
+        assertSame(ValidationError.PULSE_PRESSURE_TOO_NARROW, results.get(0).getError());
+    }
+
+    @Test
+    public void saveBloodPressure_outOfRange_neverReachesDao_andReturnsReason() {
+        final List<SaveResult<BloodPressureReading>> results = new ArrayList<>();
+
+        repository.saveBloodPressure(new BloodPressureReading(0, 261, 80, TAKEN_AT), results::add);
+        repository.saveBloodPressure(new BloodPressureReading(0, 120, 29, TAKEN_AT), results::add);
+
+        assertEquals(0, pressureDao.inserted.size());
+        assertSame(ValidationError.SYSTOLIC_TOO_HIGH, results.get(0).getError());
+        assertSame(ValidationError.DIASTOLIC_TOO_LOW, results.get(1).getError());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void rejectedResult_hasNoSavedEntity() {
+        final List<SaveResult<GlucoseReading>> results = new ArrayList<>();
+        repository.saveGlucose(new GlucoseReading(0, 10, TAKEN_AT), results::add);
+
+        results.get(0).getSaved();
+    }
+
+    @Test
+    public void rejection_isDeliveredThroughMainExecutor() {
+        final List<Runnable> mainQueue = new ArrayList<>();
+        final VitalsRepository deferred = new VitalsRepository(glucoseDao, pressureDao,
+                new RepositoryExecutors(Runnable::run, mainQueue::add));
+        final List<SaveResult<BloodPressureReading>> results = new ArrayList<>();
+
+        deferred.saveBloodPressure(new BloodPressureReading(0, 90, 90, TAKEN_AT), results::add);
+
+        assertEquals("El rechazo espera al hilo principal", 0, results.size());
+        mainQueue.get(0).run();
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isSuccess());
     }
 
     @Test

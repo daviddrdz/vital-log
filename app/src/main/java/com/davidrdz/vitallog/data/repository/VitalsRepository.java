@@ -3,6 +3,8 @@ package com.davidrdz.vitallog.data.repository;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
+import com.davidrdz.vitallog.analytics.ClinicalRangeValidator;
+import com.davidrdz.vitallog.analytics.ValidationResult;
 import com.davidrdz.vitallog.data.db.BloodPressureReadingDao;
 import com.davidrdz.vitallog.data.db.GlucoseReadingDao;
 import com.davidrdz.vitallog.data.entity.BloodPressureReading;
@@ -10,7 +12,8 @@ import com.davidrdz.vitallog.data.entity.GlucoseReading;
 
 /**
  * Único punto de acceso a las lecturas de glucosa y presión arterial desde la UI.
- * En el Hito 4 valida cada lectura con el Gestor Analítico antes de guardarla.
+ * Valida cada lectura con {@link ClinicalRangeValidator} antes de guardarla: una lectura imposible
+ * nunca llega al DAO y se devuelve como {@link SaveResult#rejected}.
  */
 public final class VitalsRepository {
 
@@ -29,15 +32,27 @@ public final class VitalsRepository {
         this.executors = executors;
     }
 
-    /** Guarda la lectura en segundo plano y entrega el resultado en el hilo principal. */
+    /** Valida y guarda la lectura en segundo plano; entrega el resultado en el hilo principal. */
     public void saveGlucose(@NonNull final GlucoseReading reading,
                             @NonNull final SaveResult.Callback<GlucoseReading> callback) {
+        final ValidationResult validation =
+                ClinicalRangeValidator.validateGlucose(reading.getValueMgDl());
+        if (!validation.isValid()) {
+            executors.reject(validation.getError(), callback);
+            return;
+        }
         executors.save(() -> reading.withId(glucoseDao.insert(reading)), callback);
     }
 
-    /** Guarda la lectura en segundo plano y entrega el resultado en el hilo principal. */
+    /** Valida y guarda la lectura en segundo plano; entrega el resultado en el hilo principal. */
     public void saveBloodPressure(@NonNull final BloodPressureReading reading,
                                   @NonNull final SaveResult.Callback<BloodPressureReading> callback) {
+        final ValidationResult validation = ClinicalRangeValidator.validateBloodPressure(
+                reading.getSystolic(), reading.getDiastolic());
+        if (!validation.isValid()) {
+            executors.reject(validation.getError(), callback);
+            return;
+        }
         executors.save(() -> reading.withId(pressureDao.insert(reading)), callback);
     }
 

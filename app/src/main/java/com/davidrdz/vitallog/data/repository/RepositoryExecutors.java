@@ -2,6 +2,8 @@ package com.davidrdz.vitallog.data.repository;
 
 import androidx.annotation.NonNull;
 
+import com.davidrdz.vitallog.analytics.ValidationError;
+
 import java.util.concurrent.Executor;
 
 /**
@@ -26,6 +28,13 @@ public final class RepositoryExecutors {
             final SaveResult<T> result = SaveResult.success(work.run());
             main.execute(() -> callback.onResult(result));
         });
+    }
+
+    /** Entrega el rechazo en el hilo principal sin tocar la base de datos. */
+    <T> void reject(@NonNull final ValidationError error,
+                    @NonNull final SaveResult.Callback<T> callback) {
+        final SaveResult<T> result = SaveResult.rejected(error);
+        main.execute(() -> callback.onResult(result));
     }
 
     /** Escritura en la base de datos que devuelve la entidad guardada. */
