@@ -2,7 +2,7 @@
 
 Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.pdf`. Al terminar cada hito la app **compila y pasa sus pruebas JVM**. Claude no usa emulador ni dispositivo: la demo en dispositivo la hace el usuario (bloques "Verificación manual").
 
-**Estado:** Hitos 1–8 completos. Hito 9 (rediseño visual "Sobremesa" del resto de pantallas, ver `docs/DESIGN_DIRECTION.md`) pendiente. La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
+**Estado:** Hitos 1–9 completos. El rediseño visual "Sobremesa" (Hitos 7–9, ver `docs/DESIGN_DIRECTION.md`) quedó aplicado en todas las pantallas. La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
 
 ## Decisiones globales (conflictos resueltos con CLAUDE.md)
 
@@ -82,6 +82,11 @@ Room v1 (5 entidades, 5 DAOs, `exportSchema` con `app/schemas/` versionado), sin
 - **Full-Screen Intent en API 34+**: Google lo restringe a apps de llamadas y alarmas. Si no se concede, la notificación aparece como heads-up con sonido de alarma y la pantalla de permisos lleva a los ajustes.
 - **Profundidad de navegación**: los formularios de medicamento y cita son un paso de la tarea que siempre regresa a la agenda; no cuentan como sección nueva.
 - **Ahorro de batería agresivo de fabricantes**: fuera de alcance; solo se usa `setAlarmClock`.
+- **Pendientes visuales fuera del Hito 9** (no tocan layouts):
+  - El icono de la app y el icono pequeño de la notificación siguen siendo los de la plantilla de Android (androide verde).
+  - El campo de nombre es de una sola línea, así que con fuente 2.0× un nombre largo se desplaza
+    horizontalmente mientras se escribe. Hacerlo multilínea cambia la tecla Enter del teclado.
+  - En horizontal con fuente 2.0×, los 2 botones fijos del modal dejan poco espacio a la información.
 - **Fuera de alcance**: exportar a PDF, borrar lecturas desde el historial, red o sincronización (prohibidas por CLAUDE.md) y el dial rotativo.
 
 ---
@@ -155,18 +160,58 @@ Etapa A (dashboard) aprobada con capturas del usuario; etapa B (captura) entrega
 
 **Verificación manual (usuario):** capturas de glucosa y presión a 1.0× y 2.0×: valor por defecto, "Máximo"/"Mínimo", aviso crítico y error de validación.
 
-### Hito 9 — Resto de pantallas y cierre
-**Objetivo:** coherencia visual en todas las pantallas y auditoría final.
+### Hito 9 — Resto de pantallas y cierre ✅
+Coherencia visual en todas las pantallas, en 3 etapas aprobadas por el usuario (A: modal de alarma;
+B: agenda, formularios y diálogo; C: historial y permisos) y una pasada final de consistencia.
+- **Modal de alarma:** sigue con **exactamente 2 botones** de ≥ 96dp y radio 20, ahora **fijos al pie**
+  (fuera del `ScrollView`) para que se vean sin desplazar aunque la fuente esté a 2.0×. Arriba van el
+  plato (`bg_plate_brand`, arena con borde cacao, 128dp, icono de 88dp), el aviso, el nombre en
+  `TextAppearance.VitalLog.AlarmName` (34sp, peso 900, se parte con guion) y la dosis y la hora,
+  todo alineado al inicio.
+- **Agenda:** el icono pasa de cada tarjeta al encabezado de su sección ("Mis medicamentos",
+  "Mis citas con el médico"), para dejar todo el ancho al nombre. Entre los dos grupos hay
+  `spacing_section` (40dp). Las tarjetas siguen en `bg_outlined`.
+- **Formularios:** campos en `surface_field` (#FFFFFF) con borde tinta de 3dp que, al escribir,
+  pasa a cacao de 5dp (`bg_text_field`). Entre el nombre y los números hay 40dp.
+- **Diálogo de borrado:** `ThemeOverlay.VitalLog.Dialog` (blanco cálido sólido, radio 20, sin
+  cambios en Java). "No, conservar" (`Button.Keep`: arena, cacao, 26sp) pesa más que "Sí, borrar"
+  (`Button.Delete.Confirm`: blanco cálido, borde rojo, 22sp). La opción segura sigue primero y a 24dp.
+- **Historial:** cada subtítulo del resumen lleva su icono (`vital_glucose`, `vital_pressure`,
+  `brand_primary`). `HistoryAdapter` usa los tokens `vital_*` y `brand_primary`, y se **borraron los
+  alias** `action_*_fg` del Hito 7.
+- **Guía de permisos:** el pictograma va en el mismo plato que el modal (96dp, icono de 64dp), alineado al inicio.
+- **Pasada de consistencia:**
+  - Botones grandes consolidados en `Button.Large` → `Save` y `General` → `Add`,
+    `OpenSettings`, `Keep` y `Secondary` (antes había 4 copias de "arena + cacao + 88dp").
+  - Tipografía con negrita 700 en lugar de `sans-serif-medium`.
+  - `letterSpacing = 0` en el cuerpo.
+  - `elevationOverlayEnabled = false` en el tema.
+  - `touch_target_min` documentado con `tools:ignore`.
+  - Sin literales de color ni de tamaño en layouts ni en Java.
+- **Pruebas:** `FullScreenAlarmActivityTest.takenButton_createsDoseLog` cambia `scrollTo()` por
+  `check(isDisplayed())` + `click()`, porque el botón ya no está en un `ScrollView` (escrita y
+  compilada, no ejecutada). IDs, textos y lógica sin cambios.
 
-- **Modal de alarma (`activity_full_screen_alarm.xml`):** siguen siendo **exactamente 2 botones** de ≥ 96dp,
-  ahora con radio de 20dp. "Ya lo tomé"/"Entendido" en verde de éxito; "Recordar más tarde" en arena + cacao.
-  El pictograma del medicamento o de la cita va en cacao.
-- **Agenda, formularios, historial y permisos:** tarjetas `item_*` en blanco cálido con borde
-  `outline_strong` y radio 16. En el historial, los iconos de glucosa y presión usan `vital_*` y los de
-  medicamento, cacao (antes verde, que chocaba con `status_ok`). Los campos de texto van en blanco con borde tinta.
-- **Banner de feedback y diálogo de borrado:** solo cambian tokens; las animaciones, la duración y los tonos se quedan como están.
-- Eliminar los estilos `Action.*` y los dimens o drawables que queden sin uso (sin código muerto).
-- **Cierre:** lista de comprobación final de la skill auditora, con la tabla regla → estado; revisión
-  estática de escala de todas las pantallas; actualizar "Estado actual" en CLAUDE.md y el resumen de los Hitos 7–9 aquí.
-- **Verificación manual (usuario):** flujo completo a 1.0×, 1.3× y 2.0× (registrar glucosa y presión,
-  agregar un medicamento, disparar un recordatorio, ver el historial).
+**Decisiones:**
+- **Negrita 700 en vez de medium** (aprobada por el usuario). Causa encontrada al cerrar el hito: los padres
+  `TextAppearance.Material3.*` traen `app:fontFamily="sans-serif"`, que en los `TextView` de AppCompat
+  manda sobre `android:fontFamily`, así que `sans-serif-medium` nunca se aplicó. Ahora cada estilo fija
+  `fontFamily` y `android:fontFamily`, y pide el peso con `textStyle=bold` + `textFontWeight`.
+- **"Borrar" sigue en rojo** (aprobado por el usuario): es una excepción documentada a "sin rojo en acciones",
+  igual que el verde de "Guardar"/"Ya lo tomé".
+- **Tinte de elevación apagado en todo el tema:** "Sí, borrar" se veía más oscuro que el fondo del
+  diálogo. La causa probable es el tinte de elevación de Material 3, porque su relleno coincide con
+  `colorSurface` y la vista se infla con el tema de la Activity. No se confirmó en dispositivo.
+
+**Verificación:**
+- `./gradlew assembleDebug test lint assembleDebugAndroidTest` en verde: 143 pruebas JVM; lint con
+  0 errores y 6 avisos, todos de versiones de dependencias o de Gradle.
+- `audit_ui.py` con 0 ERROR y 2 WARN (`EditText` de nombre y médico, justificados).
+- 27 pares de color con `contrast.py` ≥ 7:1, todos oscuro sobre claro; el mínimo sigue siendo
+  `status_ok`/`surface_success`, 7.31.
+- Revisión estática de escala en los 19 layouts: ningún texto con altura fija, `maxLines` ni `ellipsize`,
+  y todas las pantallas dentro de un `ScrollView`.
+
+**Verificación manual (usuario):** etapas A y B revisadas con capturas a 1.0× y 2.0×; la etapa C se
+revisó en el dispositivo sin capturas. Falta comprobar en el dispositivo la negrita 700 y que el
+diálogo ya no tiña "Sí, borrar".
