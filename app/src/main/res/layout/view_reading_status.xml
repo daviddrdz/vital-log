@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Contenido de ReadingStatusView (LinearLayout horizontal, blanco sólido con borde oscuro).
+    Categoría informativa de la lectura con icono + texto + color (nunca solo color) y, si hace
+    falta, un aviso en lenguaje llano. El icono es decorativo: el texto ya dice la categoría.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:orientation="horizontal"
+    tools:parentTag="android.widget.LinearLayout">
+
+    <ImageView
+        android:id="@+id/img_status_icon"
+        android:layout_width="@dimen/icon_feedback_size"
+        android:layout_height="@dimen/icon_feedback_size"
+        android:importantForAccessibility="no"
+        tools:src="@drawable/ic_check_circle" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_medium"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_status_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.VitalLog.Label"
+            tools:text="@string/category_glucose_normal" />
+
+        <TextView
+            android:id="@+id/txt_status_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_touch"
+            android:lineSpacingMultiplier="1.2"
+            android:textAppearance="@style/TextAppearance.VitalLog.Body"
+            android:visibility="gone"
+            tools:text="@string/reading_critical_warning"
+            tools:visibility="visible" />
+    </LinearLayout>
+</merge>

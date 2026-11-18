@@ -35,4 +35,6 @@
 
     <!-- Retroalimentación de guardado: verde claro sólido con borde/check status_ok -->
     <color name="surface_success">#FFE4F3E8</color>
+    <!-- Retroalimentación de error: rojo claro sólido con borde/icono status_danger -->
+    <color name="surface_error">#FFFDE8E8</color>
 </resources>

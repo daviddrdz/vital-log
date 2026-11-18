@@ -60,6 +60,30 @@
     <string name="saved_glucose">Guardado: azúcar %1$d %2$s, %3$s</string>
     <string name="saved_pressure">Guardado: presión %1$d/%2$d %3$s, %4$s</string>
 
+    <!-- Categoría informativa de la lectura (no es un diagnóstico): texto + icono + color -->
+    <string name="category_glucose_low">Azúcar baja</string>
+    <string name="category_glucose_normal">Azúcar en rango</string>
+    <string name="category_glucose_high">Azúcar alta</string>
+    <string name="category_glucose_critical">Azúcar muy alta</string>
+    <string name="category_pressure_low">Presión arterial baja</string>
+    <string name="category_pressure_normal">Presión arterial normal</string>
+    <string name="category_pressure_elevated">Presión arterial un poco elevada</string>
+    <string name="category_pressure_high">Presión arterial alta</string>
+    <string name="category_pressure_critical">Presión arterial muy alta</string>
+    <string name="reading_critical_warning">Este número es muy alto. Si te sientes mal, llama a tu médico. Puedes guardarlo igual.</string>
+    <string name="reading_problem_title">Revisa los números</string>
+
+    <!-- Lecturas imposibles: qué pasó y qué hacer, sin jerga -->
+    <string name="error_not_saved">No se guardó. %1$s</string>
+    <string name="error_glucose_too_low">Ese número de azúcar es demasiado bajo para ser correcto. Revísalo.</string>
+    <string name="error_glucose_too_high">Ese número de azúcar es demasiado alto para ser correcto. Revísalo.</string>
+    <string name="error_systolic_too_low">El número de arriba es demasiado bajo para ser correcto. Revísalo.</string>
+    <string name="error_systolic_too_high">El número de arriba es demasiado alto para ser correcto. Revísalo.</string>
+    <string name="error_diastolic_too_low">El número de abajo es demasiado bajo para ser correcto. Revísalo.</string>
+    <string name="error_diastolic_too_high">El número de abajo es demasiado alto para ser correcto. Revísalo.</string>
+    <string name="error_systolic_not_above_diastolic">El número de arriba debe ser mayor que el de abajo. Revísalos.</string>
+    <string name="error_pulse_pressure_too_narrow">El número de arriba debe ser al menos %1$d más alto que el de abajo. Revísalos.</string>
+
     <!-- Pantalla: medicamentos y citas -->
     <string name="title_agenda">Mis medicamentos y citas</string>
     <string name="body_agenda">Aquí ves tus medicamentos y tus citas con el médico. Para agregar uno nuevo, toca Agregar medicamento o Agregar cita.</string>

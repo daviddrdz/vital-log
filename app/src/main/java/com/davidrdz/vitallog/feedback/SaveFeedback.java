@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 
 /**
- * Fachada de retroalimentación al guardar (CLAUDE.md §3.4): siempre banner visible + tono.
- * En el Hito 4 se agrega {@code showError}.
+ * Fachada de retroalimentación al guardar (CLAUDE.md §3.4): siempre banner visible + tono, con un
+ * banner y un tono distintos para el éxito y para el error.
  */
 public final class SaveFeedback {
 
@@ -31,5 +31,11 @@ public final class SaveFeedback {
     public void showSuccess(@NonNull final CharSequence message) {
         banner.showSuccess(message);
         tonePlayer.playSuccess();
+    }
+
+    /** Banner de aviso con el motivo en lenguaje llano + tono de error (más grave y largo). */
+    public void showError(@NonNull final CharSequence message) {
+        banner.showError(message);
+        tonePlayer.playError();
     }
 }
