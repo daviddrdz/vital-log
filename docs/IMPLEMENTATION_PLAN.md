@@ -1,328 +1,85 @@
 # VitalLog — Plan de implementación (6 hitos)
 
-Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.pdf`. Al terminar cada hito la app **compila y pasa sus pruebas JVM**. Claude no usa emulador ni dispositivo: la demo en dispositivo la hace el usuario (ver bloques "Verificación manual").
+Plan incremental derivado de `CLAUDE.md` (fuente de verdad) y de `docs/Proyect.pdf`. Al terminar cada hito la app **compila y pasa sus pruebas JVM**. Claude no usa emulador ni dispositivo: la demo en dispositivo la hace el usuario (bloques "Verificación manual").
 
-## Decisiones tomadas (conflictos resueltos con CLAUDE.md)
+**Estado:** Hitos 1–6 completos (plan terminado). La estructura de paquetes vigente está en el código (`app/src/main/java/com/davidrdz/vitallog/`).
+
+## Decisiones globales (conflictos resueltos con CLAUDE.md)
 
 | Tema | Decisión |
 |---|---|
 | Presión sistólica mínima | **60 mmHg** (CLAUDE.md §4.2), no 50. |
-| Modelo de datos | Entidades de CLAUDE.md: `GlucoseReading`, `BloodPressureReading`, `Medication`, `DoseLog` (no `VitalRecord`/`MedicationSchedule`). Persistencia con **Room** (no `SQLiteOpenHelper`). |
-| Retroalimentación al guardar | Versión básica (banner + tono) **desde el Hito 3**, para cumplir §3.4 desde el primer guardado. El Hito 6 la pule y agrega el historial. |
-| Citas médicas | **Incluidas**: entidad `Appointment` y recordatorio con el mismo modal ("Entendido" / "Recordar más tarde"). Requiere actualizar CLAUDE.md §4 y §4.3 (Hito 3). |
-| Dial rotativo | **Descartado**: con temblor es menos preciso que los botones +/−. Solo se usan botones +/− con aceleración. |
+| Modelo de datos | `GlucoseReading`, `BloodPressureReading`, `Medication`, `DoseLog`, `Appointment`. Persistencia con **Room**. |
+| Retroalimentación al guardar | Versión básica (banner + tono) desde el Hito 3, para cumplir §3.4 desde el primer guardado. El Hito 6 la pule y agrega el historial. |
+| Citas médicas | Incluidas (entidad `Appointment`, recordatorio con el mismo modal). CLAUDE.md §4 y §4.3 ya actualizados. |
+| Dial rotativo | **Descartado**: con temblor es menos preciso que los botones +/−. Solo botones +/− con aceleración. |
 
----
+## Convenciones transversales
 
-## 0. Convenciones transversales (aplican a todos los hitos)
-
-- **Criterio de "hito terminado"**:
+- **Hito terminado:**
   1. `./gradlew assembleDebug test lint` en verde.
   2. `python3 .claude/skills/gerontological-ui-auditor/scripts/audit_ui.py app/src/main/res app/src/main/java` sin `ERROR`.
-  3. `contrast.py` para cada par de colores (texto/fondo) nuevo, con resultado ≥ 7:1.
+  3. `contrast.py` ≥ 7:1 para cada par de colores nuevo.
   4. Revisión estática de escala de fuente (sin alturas fijas en contenedores de texto, `ScrollView` donde haga falta, sin `maxLines`/`ellipsize` que corten texto).
   5. Sin commit de Claude: el usuario revisa el diff y commitea.
-- Pruebas instrumentadas (`androidTest/`): se escriben como indica cada hito, pero Claude **no las ejecuta** (requieren emulador); se reportan como "escritas, no ejecutadas".
+- Pruebas instrumentadas (`androidTest/`): se escriben pero Claude **no las ejecuta**; se reportan como "escritas, no ejecutadas".
 - Dependencias nuevas solo vía `gradle/libs.versions.toml`.
-- Textos en `strings.xml`, dimensiones en `dimens.xml`, colores en `colors.xml`. Nada literal en layouts ni en Java.
-- Inyección manual de dependencias: `VitalLogApp` (Application) crea y expone los repositorios; los ViewModels los reciben con un `ViewModelProvider.Factory`.
-- La lógica de dominio (`analytics/`, cálculos de alarmas, formateo de horas, resúmenes) es **Java puro** para poder probarla con JUnit en la JVM.
+- Textos en `strings.xml`, dimensiones en `dimens.xml`, colores en `colors.xml`; nada literal en layouts ni en Java.
+- Inyección manual: `VitalLogApp` crea y expone los repositorios; los ViewModels los reciben con `ViewModelProvider.Factory`.
+- La lógica de dominio (`analytics/`, alarmas, formateo de horas, resúmenes) es **Java puro** para probarla con JUnit en la JVM.
+- Las pruebas replican la estructura de paquetes: `src/test` (JUnit 4, JVM) y `src/androidTest` (Room en memoria, Espresso).
 
 ---
 
-## 1. Estructura de paquetes Java
+## Hitos completados (resumen)
 
-El árbol final se llena de forma incremental. Entre corchetes va el hito en que se crea cada archivo.
+### Hito 1 — Maquetado y sistema de diseño ✅
+Tema claro fijo (`values-night` eliminado), tokens semánticos de color validados con `contrast.py`, dimensiones base (`touch_target` 64dp, botones de acción 120dp, texto ≥ 20sp, valores 56sp), iconos siempre con texto, dashboard plano con 3 botones y `BaseScreenActivity` con botón "Volver" visible. Prueba instrumentada: `DashboardNavigationTest`.
 
-```
-com.davidrdz.vitallog
-├── VitalLogApp.java                      [H3] Application: repositorios; canales de notificación [H5]
-├── analytics/                            Java puro, sin imports de Android
-│   ├── VitalRange.java                   [H2] min, max, valor típico, unidad
-│   ├── VitalRanges.java                  [H2] GLUCOSE 20–600, SYSTOLIC 60–260, DIASTOLIC 30–160, MIN_PULSE_PRESSURE 10
-│   ├── ClinicalRangeValidator.java       [H4]
-│   ├── ValidationResult.java             [H4] ok / error (código de motivo, sin texto de UI)
-│   ├── ValidationError.java              [H4] enum de motivos de rechazo
-│   ├── ReadingCategory.java              [H4] LOW, NORMAL, ELEVATED, HIGH, CRITICAL
-│   └── ReadingClassifier.java            [H4] clasificación informativa, no diagnóstica
-├── data/
-│   ├── db/
-│   │   ├── AppDatabase.java              [H3] singleton, ExecutorService compartido, exportSchema = true
-│   │   ├── GlucoseReadingDao.java        [H3]
-│   │   ├── BloodPressureReadingDao.java  [H3]
-│   │   ├── MedicationDao.java            [H3]
-│   │   ├── DoseLogDao.java               [H3]
-│   │   └── AppointmentDao.java           [H3]
-│   ├── entity/
-│   │   ├── GlucoseReading.java           [H3] id, valueMgDl, takenAt
-│   │   ├── BloodPressureReading.java     [H3] id, systolic, diastolic, takenAt
-│   │   ├── Medication.java               [H3] id, name, doseAmount, doseUnit, hour, minute, active
-│   │   ├── DoseLog.java                  [H3] id, medicationId (FK), scheduledAt, takenAt
-│   │   └── Appointment.java              [H3] id, doctorOrPlace, scheduledAt, active
-│   └── repository/
-│       ├── VitalsRepository.java         [H3] guarda/observa glucosa y presión; valida desde [H4]
-│       ├── MedicationRepository.java     [H3] medicamentos + DoseLog
-│       ├── AppointmentRepository.java    [H3]
-│       └── SaveResult.java               [H3] éxito con la entidad guardada / rechazo con ValidationError
-├── alarms/
-│   ├── NextTriggerCalculator.java        [H5] Java puro (java.time): próximo disparo
-│   ├── ReminderRequestCodes.java         [H5] Java puro: códigos de PendingIntent únicos
-│   ├── ReminderPolicy.java               [H5] SNOOZE_MINUTES = 10, APPOINTMENT_LEAD_MINUTES = 120
-│   ├── AlarmScheduler.java               [H5] setAlarmClock / setExactAndAllowWhileIdle; cancelar, posponer, reprogramar todo
-│   ├── ReminderReceiver.java             [H5] BroadcastReceiver → ReminderNotifier
-│   ├── ReminderNotifier.java             [H5] canal de alarma, CATEGORY_ALARM, Full-Screen Intent, acciones
-│   ├── ReminderActionReceiver.java       [H5] acciones desde la notificación ("Ya lo tomé" / "Recordar más tarde")
-│   ├── BootReceiver.java                 [H5] BOOT_COMPLETED, TIME_SET, TIMEZONE_CHANGED, MY_PACKAGE_REPLACED
-│   └── AlarmPermissionChecker.java       [H5] canScheduleExactAlarms, canUseFullScreenIntent, POST_NOTIFICATIONS
-├── feedback/
-│   ├── FeedbackBannerView.java           [H3] banner grande con icono + texto (visible 3 s)
-│   ├── FeedbackTonePlayer.java           [H3] ToneGenerator → SoundPool con sonido agradable [H6]
-│   ├── SaveFeedback.java                 [H3] fachada: showSuccess(msg); showError(msg) desde [H4]
-│   └── FeedbackDurations.java            [H3] BANNER_VISIBLE_MS = 3000
-└── ui/
-    ├── common/
-    │   ├── BaseScreenActivity.java       [H1] insets + botón visible "Volver"
-    │   ├── Event.java                    [H3] evento de un solo consumo para LiveData
-    │   ├── SpokenTimeFormatter.java      [H3] Java puro: "8:30 de la mañana", "lunes 16 de noviembre"
-    │   └── ViewModelFactory.java         [H3]
-    ├── home/
-    │   └── MainActivity.java             [H1] dashboard plano (se mueve desde el paquete raíz)
-    ├── widget/
-    │   ├── StepperModel.java             [H2] Java puro: valor, límites, clamp, incremento
-    │   ├── AccelerationPolicy.java       [H2] Java puro: paso 1 → 5 → 10 según repeticiones
-    │   ├── RepeatTouchListener.java      [H2] pulsación continua (retraso inicial + repetición)
-    │   └── NumericStepperView.java       [H2] vista compuesta: − / valor ≥ 56sp + unidad / +
-    ├── glucose/
-    │   ├── GlucoseEntryActivity.java     [H1 pantalla base → H2 control → H3 guardado]
-    │   └── GlucoseEntryViewModel.java    [H3]
-    ├── pressure/
-    │   ├── PressureEntryActivity.java    [H1 → H2 → H3]
-    │   └── PressureEntryViewModel.java   [H3]
-    ├── agenda/                           "Mis medicamentos y citas"
-    │   ├── AgendaActivity.java           [H1 pantalla base → H3 listas]
-    │   ├── AgendaViewModel.java          [H3]
-    │   ├── MedicationFormActivity.java   [H3]
-    │   ├── AppointmentFormActivity.java  [H3]
-    │   ├── MedicationAdapter.java        [H3]
-    │   └── AppointmentAdapter.java       [H3]
-    ├── alarm/
-    │   ├── FullScreenAlarmActivity.java  [H5]
-    │   └── AlarmViewModel.java           [H5]
-    ├── permissions/
-    │   └── PermissionsGuideActivity.java [H5] un permiso por pantalla, botón "Abrir ajustes"
-    └── history/
-        ├── HistoryActivity.java          [H6]
-        ├── HistoryViewModel.java         [H6]
-        ├── HistoryAdapter.java           [H6]
-        ├── HistoryItem.java              [H6] fila unificada (azúcar / presión / toma)
-        └── HistorySummaryCalculator.java [H6] Java puro: promedios, mín/máx, conteo por categoría
-```
+### Hito 2 — Control numérico visual reutilizable ✅
+`NumericStepperView` (botones −/+ de 80dp, valor ≥ 56sp, sin teclado) con `StepperModel`, `AccelerationPolicy` (paso 1 → 5 → 10 a las 10 y 20 repeticiones) y `RepeatTouchListener` (400 ms inicial, repite cada 100 ms). Rangos en `VitalRanges` (se crearon aquí porque los límites del control salen de ellos): glucosa 20–600, sistólica 60–260, diastólica 30–160, presión de pulso mínima 10; valores típicos 100 / 120 / 80. Accesibilidad: live region, acciones de TalkBack y conserva el valor al rotar.
 
-Las pruebas siguen la misma estructura de paquetes:
-- `app/src/test/java/com/davidrdz/vitallog/...`: pruebas JVM (JUnit 4).
-- `app/src/androidTest/java/com/davidrdz/vitallog/...`: pruebas instrumentadas (Room en memoria, Espresso).
+### Hito 3 — Persistencia offline + retroalimentación básica ✅
+Room v1 (5 entidades, 5 DAOs, `exportSchema` con `app/schemas/` versionado), sin `allowMainThreadQueries` ni `fallbackToDestructiveMigration`; escrituras en un `ExecutorService` compartido. Repositorios con `save(entity, callback)` que entrega `SaveResult` en el hilo principal. Banner (3 s) + tono con `ToneGenerator`. Agenda con listas y formularios de medicamento y cita (nombre por teclado, el resto con steppers); borrar pide confirmación ("Sí, borrar" / "No, conservar"). `SpokenTimeFormatter` (es-MX). Privacidad: `allowBackup="false"` y base de datos excluida de `cloud-backup` y `device-transfer`.
+
+### Hito 4 — Gestor analítico de validación ✅
+`ClinicalRangeValidator` (Java puro) devuelve `ValidationError` (códigos, sin texto de UI); `VitalsRepository` valida **antes** de insertar y devuelve `SaveResult.rejected(error)`. `ReadingClassifier` es informativo, no diagnóstico:
+- Glucosa: < 70 baja; 70–180 en rango; 181–249 alta; ≥ 250 muy alta.
+- Presión: < 90/60 baja; < 120/80 normal; 120–129 con < 80 elevada; ≥ 130 o ≥ 80 alta; ≥ 180 o ≥ 120 crítica.
+
+**Decisiones:**
+- El aviso crítico se muestra **en vivo** bajo el control (`ReadingStatusView`), con texto + icono + color; no hay diálogo extra, así que guardar sigue siendo un toque. Un valor posible nunca se bloquea.
+- El aviso en lenguaje llano solo aparece en CRITICAL; glucosa < 70 se muestra sin aviso adicional.
+- El control de presión **no** limita la sistólica a diastólica + 10 en vivo, para poder capturar exactamente lo que marca el aparato (90/85 → error + tono grave).
+- La presión se clasifica por el número más preocupante (150/55 → alta). "Elevada" solo aplica a presión.
+
+### Hito 5 — Alarmas y modal a pantalla completa ✅
+`NextTriggerCalculator` (java.time, `ZoneId` inyectado; aviso de cita = `scheduledAt − 120 min`), `ReminderPolicy` (posponer 10 min), `AlarmScheduler` (`setAlarmClock`), `ReminderReceiver` / `ReminderNotifier` (canal de alarma, `CATEGORY_ALARM`, Full-Screen Intent), `BootReceiver` (reinicio, cambio de hora/zona, actualización), `FullScreenAlarmActivity` con **exactamente 2 botones** de 96dp ("Ya lo tomé" / "Recordar más tarde"; cita: "Entendido" / "Recordar más tarde"), `AlarmPermissionChecker` + `PermissionsGuideActivity` (un permiso por pantalla). Manifiesto: receivers `exported="false"` salvo `BootReceiver`. Pruebas JVM: `NextTriggerCalculatorTest`, `ReminderRequestCodesTest`, `ReminderPolicyTest`. Instrumentada (escrita, no ejecutada): `FullScreenAlarmActivityTest`.
+
+**Decisiones:**
+- Sin permiso de alarmas exactas el respaldo es `setAndAllowWhileIdle` (aproximada), porque `setExactAndAllowWhileIdle` exige el mismo permiso que `setAlarmClock`. `BootReceiver` también escucha `SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED` y reprograma como exacto al concederse.
+- Los repositorios programan/cancelan la alarma en la misma tarea de fondo que guarda/borra, para que base de datos y alarmas no se desincronicen.
+- "Ya lo tomé" desde la notificación abre el modal (PendingIntent de Activity), que registra la toma con banner + tono (§3.4). `ReminderActionReceiver` solo maneja "Recordar más tarde" y "Entendido", que no guardan nada.
+- Botón Atrás cierra el modal pero deja la notificación activa y no registra nada.
+- `FullScreenAlarmActivityTest` usa el singleton de `VitalLogApp`, no una base en memoria; cada prueba trabaja solo con el medicamento que inserta.
+
+### Hito 6 — Retroalimentación multimodal pulida + historial simple ✅
+`FeedbackBannerView` entra con escala (banner 0.9 → 1 y check con rebote, sin transparencia), visible 3 s, se muestra sin animar si `ValueAnimator.areAnimatorsEnabled()` es falso y anuncia el mensaje con `announceForAccessibility`. `FeedbackTonePlayer` usa `SoundPool` (`USAGE_ASSISTANCE_SONIFICATION`) con `res/raw/feedback_success.ogg` (Do5 → Sol5) y `feedback_error.ogg` (La3), sintetizados para el proyecto; si un sonido no cargó, suena `ToneGenerator`. Dashboard con 4.º botón "Ver mi historial" (`action_history_*`, 10.2:1). `HistoryActivity` (solo lectura): botones "Últimos 7 días" / "Últimos 30 días", resumen y lista agrupada por día. Java puro: `HistoryPeriod`, `HistoryItem` (fila unificada + `groupByDay`), `HistorySummary`, `HistorySummaryCalculator`; `SpokenTimeFormatter.formatDayHeading`. Pruebas JVM: `HistorySummaryCalculatorTest`, `FeedbackDurationsTest`, `SpokenTimeFormatterTest` ampliado. Instrumentadas (escritas, no ejecutadas): `HistoryActivityTest` y el botón nuevo en `DashboardNavigationTest`.
+
+**Decisiones:**
+- "Últimos N días" = N días de calendario contando hoy (desde las 00:00 de hace N − 1 días). El ViewModel observa una vez 30 días y el cambio de periodo filtra en memoria.
+- Lista de lo más reciente a lo más antiguo, con encabezado "Hoy, martes 17 de noviembre".
+- Resumen de presión: promedio como par (128/82) y rango de cada número por separado; el promedio redondea x.5 hacia arriba.
+- Consultas nuevas en los DAOs (`observeSince`, `observeTakenSince` con `JOIN` a `medications` → POJO `TakenDose`) sin tocar el esquema; las tomas de medicamentos borrados siguen saliendo.
+- Reutilización: `ReadingCategoryStyle` (icono/color/texto de categoría, antes privado en `ReadingStatusView`) y `ChoiceButtonStyle` (antes en `MedicationFormActivity`).
+- El mensaje del banner dejó de ser región "live" para que TalkBack no lo lea dos veces. `announceForAccessibility` está en desuso desde API 36 pero funciona; se usa porque es lo que pide el plan y repite mensajes idénticos.
+- Las filas no son tocables; `screenReaderFocusable` hace que TalkBack lea cada tarjeta completa.
 
 ---
 
-## 2. Hitos
+## Riesgos y notas
 
-### Hito 1 — Maquetado y sistema de diseño
-
-**Entregables**
-- `themes.xml`: tema claro fijo `Theme.Material3.Light.NoActionBar`. Se **borra** `values-night/themes.xml`. Los colores del tema se mapean a `colors.xml`. Estilos `Widget.VitalLog.Button.Action` y `TextAppearance.VitalLog.Title/Body/Value` (`sans-serif` / `sans-serif-medium`).
-- `colors.xml`: tokens semánticos (`text_primary` ≈ #1A1A1A, `background` #FFFFFF, `surface_action` claro sólido, `outline_strong`, `status_ok`/`status_warning`/`status_danger` oscuros). Cada par se valida con `contrast.py` (≥ 7:1).
-- `dimens.xml`: `touch_target_min` 60dp, `touch_target` 64dp, `action_button_height` 120dp, `alarm_button_height` 96dp, `spacing_touch` 12dp, `screen_padding` 24dp, `text_body` 20sp, `text_button` 22sp, `text_title` 28sp, `text_value` 56sp.
-- `strings.xml`: textos del dashboard y del botón "Volver".
-- Iconos vectoriales: gota (glucosa), corazón (presión), pastilla/calendario (agenda) y flecha (volver). Siempre acompañados de texto.
-- `activity_main.xml`: `ScrollView` con el título "¿Qué quieres hacer hoy?" y 3 botones a todo lo ancho (≥ 120dp de alto, separados ≥ 24dp): **"Registrar glucosa"**, **"Registrar presión arterial"** y **"Mis medicamentos y citas"**.
-- `BaseScreenActivity` y las 3 Activities destino, con título y botón "Volver" (se completan en los hitos siguientes). `MainActivity` pasa a `ui/home/` y se actualiza el manifiesto.
-
-**Pruebas**
-- No hay lógica de negocio en este hito. La comprobación automática es `audit_ui.py` + `contrast.py`.
-- Instrumentada `DashboardNavigationTest` (Espresso): los 3 botones son visibles, miden ≥ 64dp y abren su pantalla; "Volver" regresa al dashboard.
-- Se eliminan `ExampleUnitTest` y `ExampleInstrumentedTest`.
-
-**Verificación manual del usuario** (Claude no la ejecuta): el dashboard se ve bien con escala de fuente 1.0× y 2.0×, sin texto cortado. Cada botón abre su pantalla y "Volver" regresa.
-
----
-
-### Hito 2 — Control numérico visual reutilizable
-
-**Entregables**
-- `analytics/VitalRange` y `VitalRanges`, con las constantes de CLAUDE.md §4.2 y valores típicos (glucosa 100, sistólica 120, diastólica 80). Se crean aquí porque los límites del control salen de estas constantes.
-- `StepperModel` (Java puro): valor actual, `increment(step)`, `decrement(step)`, clamp a [min, max], `isAtMin()` / `isAtMax()`.
-- `AccelerationPolicy` (Java puro): paso 1 en las primeras 10 repeticiones, 5 en las 10 siguientes y 10 a partir de ahí. Todas las cifras son constantes con nombre.
-- `RepeatTouchListener`: al mantener presionado, espera 400 ms y luego repite cada 100 ms. Se reinicia al soltar.
-- `NumericStepperView` (layout `view_numeric_stepper.xml`):
-  - Botones − / + de 80dp y valor central ≥ 56sp, con la unidad debajo y un rótulo arriba ("Azúcar en la sangre").
-  - Se configura desde Java con `bind(VitalRanges.GLUCOSE)`; no hay números en el XML.
-  - Al llegar a un límite, el botón muestra el texto "Máximo" o "Mínimo" en color sólido (sin transparencia).
-  - Accesibilidad: `accessibilityLiveRegion` para que TalkBack lea el valor, acciones de accesibilidad para subir y bajar, y `contentDescription` en los dos botones.
-  - Conserva el valor al rotar la pantalla.
-- Pantalla de glucosa (1 control) y pantalla de presión (2 controles: "Presión alta (número de arriba)" y "Presión baja (número de abajo)"). Todavía sin botón de guardar.
-
-**Pruebas JVM**
-- `StepperModelTest`: nunca pasa de min ni de max; el valor inicial está dentro del rango; un valor fuera de rango se ajusta al límite.
-- `AccelerationPolicyTest`: el paso cambia en las repeticiones 10 y 20, y vuelve a 1 al reiniciar.
-- `VitalRangesTest`: en cada rango, min < típico < max; el rango de la sistólica es compatible con el de la diastólica más la presión de pulso mínima.
-
-**Verificación manual del usuario** (Claude no la ejecuta): subir y bajar con toques sueltos y manteniendo presionado (se nota la aceleración). La glucosa no baja de 20 ni sube de 600. El teclado nunca aparece.
-
----
-
-### Hito 3 — Persistencia local offline + retroalimentación básica
-
-**Entregables**
-- `libs.versions.toml`: `room-runtime`, `room-compiler` (con `annotationProcessor`), `lifecycle-viewmodel`, `lifecycle-livedata`; para pruebas, `room-testing` y `androidx-test-core`. Se configura `room.schemaLocation` → `app/schemas/` y esa carpeta se versiona en git para poder escribir migraciones explícitas más adelante.
-- 5 entidades y 5 DAOs (esquema versión 1). `DoseLog.medicationId` lleva clave foránea e índice. Las lecturas devuelven `LiveData`: lista ordenada por fecha descendente y última lectura (se usa como valor inicial del control).
-- `AppDatabase` singleton, sin `allowMainThreadQueries()` ni `fallbackToDestructiveMigration()`. Expone un `ExecutorService` compartido para las escrituras.
-- Repositorios con `save(entity, callback)` asíncrono que entrega un `SaveResult` en el hilo principal.
-- ViewModels de captura: cargan la última lectura como valor inicial y exponen `LiveData<Event<SaveResult>>`.
-- Botones "Guardar azúcar" y "Guardar presión" (≥ 64dp).
-- `feedback/` básico: `FeedbackBannerView` (check grande + "Guardado: azúcar 120 mg/dL, hoy 8:30 de la mañana", visible 3 s) + tono con `ToneGenerator`. Así se cumple §3.4 desde el primer guardado.
-- Agenda ("Mis medicamentos y citas"): lista de medicamentos y lista de citas, con los botones "Agregar medicamento" y "Agregar cita", que abren sus formularios.
-  - Medicamento: el nombre se escribe con el teclado (no es un signo vital, así que §3.1 no aplica). Dosis con `NumericStepperView` + botones grandes de unidad (tableta, cápsula, ml, unidades). Hora con un stepper de hora y otro de minutos de 5 en 5, mostrando "8:30 de la mañana".
-  - Cita: médico o lugar (texto), día (stepper "dentro de N días" con la fecha escrita) y hora.
-  - Borrar un medicamento o una cita pide confirmación con los botones "Sí, borrar" / "No, conservar".
-- `SpokenTimeFormatter` (Locale es-MX).
-- Privacidad: `android:allowBackup="false"`; `backup_rules.xml` y `data_extraction_rules.xml` excluyen la base de datos tanto de `cloud-backup` como de `device-transfer`.
-- Actualizar CLAUDE.md §4 (entidad `Appointment`) y §4.3 (botones del modal de cita).
-- **Limitación conocida hasta el Hito 4**: el control ya impide valores fuera de rango, pero todavía se podría guardar una sistólica ≤ diastólica.
-
-**Pruebas JVM**
-- `VitalsRepositoryTest` y `MedicationRepositoryTest`, con DAOs falsos y un `Executor` síncrono: guardar llama al DAO y devuelve éxito.
-- `SpokenTimeFormatterTest`: medianoche, mediodía, 8:05, "hoy" / "ayer" / día de la semana.
-
-**Pruebas instrumentadas** (Room en memoria)
-- `GlucoseReadingDaoTest` y `BloodPressureReadingDaoTest`: orden descendente y última lectura.
-- `MedicationDaoTest` y `DoseLogDaoTest`: clave foránea y tomas por día.
-- `AppointmentDaoTest`: solo devuelve citas futuras y activas.
-
-**Verificación manual del usuario** (Claude no la ejecuta): guardar una glucosa → banner y tono. Cerrar y abrir la app → el control arranca en el último valor. Dar de alta un medicamento y una cita y verlos en la agenda. En modo avión todo funciona igual.
-
----
-
-### Hito 4 — Gestor analítico de validación ✅ Completado
-
-> **Decisiones de implementación** (ambigüedades resueltas con la opción más simple):
-> - El aviso de rango crítico se muestra **en vivo** debajo del control (`ReadingStatusView`), antes de tocar "Guardar". No hay un diálogo de confirmación extra, así que guardar sigue siendo un solo toque.
-> - El control de presión **no** limita la sistólica a diastólica + 10 en vivo. Así se puede capturar exactamente lo que marca el aparato, y la verificación 90/85 → error se puede reproducir. Mientras los números no cuadran, el recuadro dice qué revisar.
-> - La presión se clasifica empezando por la categoría más grave (gana el número más preocupante: 150/55 → alta). "Elevada" solo aplica a la presión.
-> - El aviso en lenguaje llano solo aparece en "muy alta" (CRITICAL), como dice el plan. El azúcar baja (< 70) se muestra con texto + icono + color, pero sin aviso adicional.
-
-**Entregables**
-- `ClinicalRangeValidator` (Java puro, usa `VitalRanges`): `validateGlucose(int)` y `validateBloodPressure(int systolic, int diastolic)` devuelven un `ValidationResult` con un `ValidationError`: `GLUCOSE_TOO_LOW`, `GLUCOSE_TOO_HIGH`, `SYSTOLIC_TOO_LOW`, `SYSTOLIC_TOO_HIGH`, `DIASTOLIC_TOO_LOW`, `DIASTOLIC_TOO_HIGH`, `SYSTOLIC_NOT_ABOVE_DIASTOLIC`, `PULSE_PRESSURE_TOO_NARROW`.
-- `VitalsRepository` valida **antes** de insertar: si la validación falla, no llama al DAO y devuelve `SaveResult.rejected(error)`.
-- `ReadingClassifier` (informativo, no diagnóstico). Los umbrales van en constantes y se documentan como orientativos:
-  - Glucosa: < 70 baja; 70–180 en rango; 181–249 alta; ≥ 250 muy alta.
-  - Presión: < 90/60 baja; < 120/80 normal; 120–129 con < 80 elevada; ≥ 130 o ≥ 80 alta; ≥ 180 o ≥ 120 crítica.
-- Avisos que no frustran al usuario:
-  - Mientras ajusta el valor, debajo del control aparece la categoría con texto + icono + color ("Azúcar alta"), nunca solo color.
-  - En rango crítico se muestra un aviso en lenguaje llano antes de guardar ("Este número es muy alto. Si te sientes mal, llama a tu médico."). El usuario **puede guardar igual**: un valor posible nunca se bloquea.
-- Error de validación (p. ej. el número de arriba ≤ el de abajo): `SaveFeedback.showError` con banner + un tono grave distinto y el mensaje "El número de arriba debe ser mayor que el de abajo. Revísalos." Como apoyo, el control de presión puede limitar la sistólica a ≥ diastólica + 10 en vivo.
-- La conversión de `ValidationError` a texto de `strings.xml` se hace en la capa de UI, para que el validador no dependa de Android.
-
-**Pruebas JVM**
-- `ClinicalRangeValidatorTest`:
-  - Glucosa: 19 ✗ / 20 ✓ / 600 ✓ / 601 ✗.
-  - Sistólica: 59 ✗ / 60 ✓ / 260 ✓ / 261 ✗.
-  - Diastólica: 29 ✗ / 30 ✓ / 160 ✓ / 161 ✗.
-  - Sistólica = diastólica ✗; sistólica < diastólica ✗.
-  - Presión de pulso: 9 ✗ / 10 ✓.
-- `ReadingClassifierTest`: cada frontera de categoría, probada por ambos lados.
-- `VitalsRepositoryTest` ampliado: una lectura inválida nunca llega al DAO y devuelve el motivo correcto.
-
-**Verificación manual del usuario** (Claude no la ejecuta): con la presión en 90/85 → error visual + tono grave, y no se guarda. Con glucosa 320 → aviso "muy alta", se guarda y se confirma.
-
----
-
-### Hito 5 — Orquestador de alarmas y modal a pantalla completa ✅ Completado
-
-> **Progreso**
-> - [x] T1 — Lógica pura: `NextTriggerCalculator`, `ReminderRequestCodes`, `ReminderPolicy` (+ `ReminderType`) y sus pruebas JVM.
-> - [x] T2 — `AlarmScheduler` conectado a los repositorios (vía la interfaz `ReminderScheduler`) + `BootReceiver`. `ReminderReceiver` ya programa la toma del día siguiente.
->
-> **Decisiones de implementación**
-> - Respaldo cuando falta el permiso de alarmas exactas: `setAndAllowWhileIdle` (aproximada). `setExactAndAllowWhileIdle` necesita el mismo permiso que `setAlarmClock`, así que no sirve como respaldo. `BootReceiver` también escucha `SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED` y reprograma todo como exacto en cuanto se concede.
-> - Los repositorios programan o cancelan la alarma en la misma tarea de fondo que guarda o borra, así la base de datos y las alarmas no se desincronizan.
-> - "Ya lo tomé" desde la notificación abre el modal (PendingIntent de Activity), que registra la toma y muestra banner + tono, así se cumple §3.4. Desde un `BroadcastReceiver` no habría retroalimentación visible. `ReminderActionReceiver` solo maneja "Recordar más tarde" y "Entendido", que no guardan nada.
-> - En el modal de cita, el texto de la hora se oculta: "Fecha y hora" ya lo dice.
-> - `FullScreenAlarmActivityTest` usa la base de datos de la app (el singleton de `VitalLogApp`) y no una en memoria. Cada prueba trabaja solo con el medicamento que inserta.
-> - [x] T3 — `ReminderReceiver`, `ReminderNotifier` (canal de alarma) y `ReminderActionReceiver` ("Recordar más tarde" / "Entendido"). `Reminder` + `ReminderIntents` llevan tipo, id y hora programada.
-> - [x] T4 — `FullScreenAlarmActivity` + `AlarmViewModel` + Full-Screen Intent en la notificación. `FullScreenAlarmActivityTest` escrita y compilada, no ejecutada.
-> - [x] T5 — `AlarmPermissionChecker` + `PermissionsGuideActivity` (se abre al entrar a la agenda si falta algún permiso; al volver de ajustes muestra el siguiente o se cierra).
-
-**Entregables**
-- Manifiesto:
-  - Permisos `SCHEDULE_EXACT_ALARM`, `USE_FULL_SCREEN_INTENT`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK` y `VIBRATE`.
-  - Receivers con `exported="false"`, salvo `BootReceiver`, que necesita sus filtros del sistema.
-  - `FullScreenAlarmActivity` con `showWhenLocked` y `turnScreenOn` (atributos + `setShowWhenLocked(true)` / `setTurnScreenOn(true)` en código), `launchMode="singleTask"` y `excludeFromRecents`.
-- `NextTriggerCalculator` (java.time, con `ZoneId` inyectado): calcula la próxima toma diaria de un medicamento y el aviso de una cita (`scheduledAt − 120 min`; si ese momento ya pasó, no se programa).
-- `AlarmScheduler`:
-  - Usa `setAlarmClock` (exacto y visible en el reloj del sistema), con `setExactAndAllowWhileIdle` como respaldo.
-  - Al guardar, editar o borrar un medicamento o una cita, programa o cancela su alarma.
-  - Cuando se dispara una alarma diaria, programa la del día siguiente.
-  - "Recordar más tarde" programa una alarma única a +10 min, con su propio código, sin alterar la diaria.
-- `ReminderReceiver` → `ReminderNotifier`: canal de alarma de importancia alta (sonido `USAGE_ALARM` + vibración), `CATEGORY_ALARM`, `setFullScreenIntent` y notificación persistente con las mismas 2 acciones del modal.
-- `FullScreenAlarmActivity` (`activity_full_screen_alarm.xml`): fondo claro sólido a pantalla completa, pictograma universal grande (pastilla o calendario, 160dp), nombre ≥ 32sp, dosis y hora. **Exactamente 2 botones** apilados a todo lo ancho, de ≥ 96dp de alto y separados ≥ 24dp:
-  - Medicamento: **"Ya lo tomé"** registra un `DoseLog`, muestra `SaveFeedback` y cierra; **"Recordar más tarde"** pospone 10 min y cierra.
-  - Cita: **"Entendido"** cierra; **"Recordar más tarde"** pospone 10 min.
-  - Botón Atrás del sistema: cierra la pantalla, pero la notificación sigue activa con sus 2 acciones (no se registra nada).
-- `BootReceiver`: con `goAsync()` y el executor, reprograma todas las alarmas activas tras un reinicio, un cambio de hora o de zona horaria, o una actualización de la app.
-- `AlarmPermissionChecker` + `PermissionsGuideActivity`: al entrar a la agenda o al guardar el primer recordatorio, si falta algún permiso (notificaciones en API 33+, alarmas exactas, pantalla completa en API 34+), se muestra una pantalla por permiso con una explicación en lenguaje llano y el botón "Abrir ajustes".
-
-**Pruebas JVM**
-- `NextTriggerCalculatorTest`:
-  - Hora futura → hoy; hora pasada → mañana; hora igual a ahora → mañana.
-  - Cruce de medianoche.
-  - Cambio de horario de verano (con `America/New_York`).
-  - Aviso de una cita que ya pasó → no se programa.
-- `ReminderRequestCodesTest`: los códigos de medicamento, cita y posposición no chocan para un mismo id.
-- `ReminderPolicyTest`: la posposición es de exactamente 10 min.
-
-**Pruebas instrumentadas**
-- `FullScreenAlarmActivityTest`: se muestran exactamente 2 botones; "Ya lo tomé" crea un `DoseLog` en la base de datos en memoria.
-
-**Verificación manual del usuario** (dispositivo/emulador API 34+; Claude no la ejecuta):
-1. Crear un medicamento para dentro de 2 min.
-2. Bloquear la pantalla (`adb shell input keyevent KEYCODE_SLEEP`) y esperar: la pantalla se enciende con el modal.
-3. Tocar "Recordar más tarde": el modal vuelve 10 min después.
-4. Tocar "Ya lo tomé": banner + tono.
-5. Reiniciar el emulador y comprobar con `adb shell dumpsys alarm | grep vitallog` que la alarma sigue programada.
-
----
-
-### Hito 6 — Retroalimentación multimodal pulida + historial simple
-
-**Entregables**
-- `FeedbackBannerView`: animación de entrada (escala + aparición del check, sin transparencia sobre el texto final), visible 3 s, `announceForAccessibility` con el mismo mensaje. Si el sistema tiene "quitar animaciones" activado, el banner aparece sin animación.
-- `FeedbackTonePlayer` con `SoundPool`:
-  - Sonido de éxito agradable (dos notas ascendentes) y sonido de error neutro (una nota grave).
-  - Archivos `.ogg` cortos en `res/raw/`, sintetizados para el proyecto (sin problemas de licencia), con `AudioAttributes.USAGE_ASSISTANCE_SONIFICATION`.
-  - Si `SoundPool` no carga, se usa `ToneGenerator` como respaldo.
-- 4.º botón en el dashboard: **"Ver mi historial"** (la navegación sigue siendo plana).
-- `HistoryActivity`, pensada para enseñarla al médico:
-  - Dos botones grandes de periodo: "Últimos 7 días" / "Últimos 30 días" (son botones de filtro, no pestañas).
-  - Arriba, un resumen: promedio, mínimo y máximo de azúcar y de presión, y número de tomas registradas.
-  - Abajo, una lista cronológica agrupada por día ("Lunes 16 de noviembre"), con filas de ≥ 20sp: hora, tipo en palabras, valor + unidad y categoría en texto + icono.
-  - Solo lectura y sin gestos.
-- `HistorySummaryCalculator` (Java puro) que calcula el resumen a partir de listas de entidades.
-
-**Pruebas JVM**
-- `HistorySummaryCalculatorTest`: lista vacía → "sin datos"; promedio redondeado; mínimo y máximo; filtros de 7 y 30 días en sus fronteras.
-- `SpokenTimeFormatterTest` ampliado: encabezados por día.
-- `FeedbackDurationsTest`: el banner dura ≥ 2 500 ms.
-
-**Pruebas instrumentadas**
-- `HistoryActivityTest`: con datos de prueba cargados, cada fila muestra el valor, la unidad y la categoría en texto.
-
-**Verificación manual del usuario** (Claude no la ejecuta): guardar una lectura → animación + sonido agradable. Provocar un error → sonido distinto. Abrir "Ver mi historial" con 30 días de datos y mostrarlo como se le mostraría al médico.
-
----
-
-## 3. Riesgos y notas
-
-- **Full-Screen Intent en API 34+**: Google restringe este permiso a apps de llamadas y alarmas. Si no se concede, la notificación aparece como heads-up con sonido de alarma, y la pantalla de permisos lleva a los ajustes.
-- **Profundidad de navegación**: los formularios para agregar un medicamento o una cita son un paso de la tarea que siempre regresa a la agenda (con "Volver" o al guardar). No cuentan como una sección de navegación nueva.
-- **Fabricantes con ahorro de batería agresivo**: queda fuera de alcance; solo se usa `setAlarmClock`.
+- **Full-Screen Intent en API 34+**: Google lo restringe a apps de llamadas y alarmas. Si no se concede, la notificación aparece como heads-up con sonido de alarma y la pantalla de permisos lleva a los ajustes.
+- **Profundidad de navegación**: los formularios de medicamento y cita son un paso de la tarea que siempre regresa a la agenda; no cuentan como sección nueva.
+- **Ahorro de batería agresivo de fabricantes**: fuera de alcance; solo se usa `setAlarmClock`.
 - **Fuera de alcance**: exportar a PDF, borrar lecturas desde el historial, red o sincronización (prohibidas por CLAUDE.md) y el dial rotativo.

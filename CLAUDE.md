@@ -3,7 +3,7 @@
 Fuente de verdad del proyecto. Toda decisión de código, UI o arquitectura debe respetar este documento. Si una petición lo contradice, se señala el conflicto antes de implementar.
 
 **Plan de trabajo:** @docs/IMPLEMENTATION_PLAN.md (6 hitos; detalle de archivos y pruebas por hito).
-**Estado actual:** Hito 5 completo → siguiente: Hito 6 (retroalimentación multimodal pulida + historial simple). Actualizar esta línea al cerrar cada hito.
+**Estado actual:** Hitos 1–6 completos (plan terminado). Si se agrega un hito nuevo, actualizar esta línea al cerrarlo.
 
 ## 1. Contexto del producto
 
