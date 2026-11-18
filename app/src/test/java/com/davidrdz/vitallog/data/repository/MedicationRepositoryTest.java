@@ -2,6 +2,7 @@ package com.davidrdz.vitallog.data.repository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import androidx.lifecycle.LiveData;
@@ -22,14 +23,16 @@ public class MedicationRepositoryTest {
 
     private FakeMedicationDao medicationDao;
     private FakeDoseLogDao doseLogDao;
+    private FakeReminderScheduler scheduler;
     private MedicationRepository repository;
 
     @Before
     public void setUp() {
         medicationDao = new FakeMedicationDao();
         doseLogDao = new FakeDoseLogDao();
+        scheduler = new FakeReminderScheduler();
         repository = new MedicationRepository(medicationDao, doseLogDao,
-                new RepositoryExecutors(Runnable::run, Runnable::run));
+                new RepositoryExecutors(Runnable::run, Runnable::run), scheduler);
     }
 
     @Test
@@ -65,6 +68,47 @@ public class MedicationRepositoryTest {
     }
 
     @Test
+    public void save_schedulesReminderForSavedMedication() {
+        repository.save(new Medication(0, "Metformina", 1, DoseUnit.TABLET, 8, 30, true),
+                result -> { });
+
+        assertEquals(List.of(FakeMedicationDao.ASSIGNED_ID), scheduler.scheduledMedicationIds);
+    }
+
+    @Test
+    public void delete_cancelsReminder() {
+        repository.delete(new Medication(5, "Losartán", 1, DoseUnit.TABLET, 20, 0, true),
+                result -> { });
+
+        assertEquals(List.of("MEDICATION:5"), scheduler.cancelled);
+    }
+
+    @Test
+    public void rescheduleReminders_schedulesEveryActiveMedication_thenRunsDone() {
+        medicationDao.active.add(new Medication(1, "Metformina", 1, DoseUnit.TABLET, 8, 0, true));
+        medicationDao.active.add(new Medication(2, "Losartán", 1, DoseUnit.TABLET, 20, 0, true));
+        final List<String> done = new ArrayList<>();
+
+        repository.rescheduleReminders(() -> done.add("done"));
+
+        assertEquals(List.of(1L, 2L), scheduler.scheduledMedicationIds);
+        assertEquals(List.of("done"), done);
+    }
+
+    @Test
+    public void findActive_deliversDaoResult() {
+        medicationDao.active.add(new Medication(4, "Metformina", 1, DoseUnit.TABLET, 8, 0, true));
+        final List<Medication> found = new ArrayList<>();
+
+        repository.findActive(4, found::add);
+        repository.findActive(99, found::add);
+
+        assertEquals(2, found.size());
+        assertEquals(4, found.get(0).getId());
+        assertNull(found.get(1));
+    }
+
+    @Test
     public void saveDoseLog_insertsInDao_andReturnsLogWithId() {
         final List<SaveResult<DoseLog>> results = new ArrayList<>();
 
@@ -80,6 +124,7 @@ public class MedicationRepositoryTest {
         static final long ASSIGNED_ID = 3;
         final List<Medication> inserted = new ArrayList<>();
         final List<Long> deactivatedIds = new ArrayList<>();
+        final List<Medication> active = new ArrayList<>();
 
         @Override
         public long insert(final Medication medication) {
@@ -96,6 +141,21 @@ public class MedicationRepositoryTest {
         public int deactivate(final long id) {
             deactivatedIds.add(id);
             return 1;
+        }
+
+        @Override
+        public List<Medication> getActive() {
+            return active;
+        }
+
+        @Override
+        public Medication findActiveById(final long id) {
+            for (final Medication medication : active) {
+                if (medication.getId() == id) {
+                    return medication;
+                }
+            }
+            return null;
         }
     }
 

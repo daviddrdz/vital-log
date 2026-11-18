@@ -1,10 +1,12 @@
 package com.davidrdz.vitallog.data.repository;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.davidrdz.vitallog.analytics.ValidationError;
 
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
 
 /**
  * Par de executors de un repositorio: uno para el trabajo con la base de datos y otro para
@@ -35,6 +37,28 @@ public final class RepositoryExecutors {
                     @NonNull final SaveResult.Callback<T> callback) {
         final SaveResult<T> result = SaveResult.rejected(error);
         main.execute(() -> callback.onResult(result));
+    }
+
+    /** Ejecuta una consulta en el executor de E/S y entrega el resultado (o null) en el principal. */
+    <T> void load(@NonNull final Query<T> query, @NonNull final Consumer<T> callback) {
+        io.execute(() -> {
+            final T result = query.run();
+            main.execute(() -> callback.accept(result));
+        });
+    }
+
+    /** Ejecuta {@code work} en el executor de E/S y después {@code done} en el principal. */
+    void run(@NonNull final Runnable work, @NonNull final Runnable done) {
+        io.execute(() -> {
+            work.run();
+            main.execute(done);
+        });
+    }
+
+    /** Consulta a la base de datos cuyo resultado puede no existir. */
+    interface Query<T> {
+        @Nullable
+        T run();
     }
 
     /** Escritura en la base de datos que devuelve la entidad guardada. */

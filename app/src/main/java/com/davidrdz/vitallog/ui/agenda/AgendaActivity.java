@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.davidrdz.vitallog.R;
 import com.davidrdz.vitallog.VitalLogApp;
+import com.davidrdz.vitallog.alarms.AlarmPermissionChecker;
 import com.davidrdz.vitallog.data.entity.Appointment;
 import com.davidrdz.vitallog.data.entity.Medication;
 import com.davidrdz.vitallog.data.repository.SaveResult;
@@ -21,6 +22,7 @@ import com.davidrdz.vitallog.feedback.SaveFeedback;
 import com.davidrdz.vitallog.ui.common.BaseScreenActivity;
 import com.davidrdz.vitallog.ui.common.SpokenTimeFormatter;
 import com.davidrdz.vitallog.ui.common.ViewModelFactory;
+import com.davidrdz.vitallog.ui.permissions.PermissionsGuideActivity;
 
 import java.util.List;
 
@@ -43,6 +45,9 @@ public class AgendaActivity extends BaseScreenActivity {
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState == null && !AlarmPermissionChecker.missing(this).isEmpty()) {
+            startActivity(new Intent(this, PermissionsGuideActivity.class));
+        }
         feedback = SaveFeedback.attach(this, findViewById(R.id.feedback_banner));
         formatter = VitalLogApp.from(this).getTimeFormatter();
         viewModel = ViewModelFactory.get(this, AgendaViewModel.class);

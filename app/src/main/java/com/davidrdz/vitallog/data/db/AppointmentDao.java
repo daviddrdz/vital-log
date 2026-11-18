@@ -1,5 +1,6 @@
 package com.davidrdz.vitallog.data.db;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -20,6 +21,15 @@ public interface AppointmentDao {
     @Query("SELECT * FROM appointments WHERE active = 1 AND scheduled_at >= :now"
             + " ORDER BY scheduled_at, id")
     LiveData<List<Appointment>> observeUpcoming(long now);
+
+    /** Citas activas desde {@code now} (consulta síncrona para reprogramar alarmas). */
+    @Query("SELECT * FROM appointments WHERE active = 1 AND scheduled_at >= :now")
+    List<Appointment> getUpcoming(long now);
+
+    /** La cita si existe y está activa; null si no. Llamar fuera del hilo principal. */
+    @Nullable
+    @Query("SELECT * FROM appointments WHERE id = :id AND active = 1")
+    Appointment findActiveById(long id);
 
     /** Marca la cita como inactiva (borrada de la lista). */
     @Query("UPDATE appointments SET active = 0 WHERE id = :id")

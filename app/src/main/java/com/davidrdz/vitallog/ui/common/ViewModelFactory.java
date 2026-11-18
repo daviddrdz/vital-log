@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.davidrdz.vitallog.VitalLogApp;
 import com.davidrdz.vitallog.ui.agenda.AgendaViewModel;
+import com.davidrdz.vitallog.ui.alarm.AlarmViewModel;
 import com.davidrdz.vitallog.ui.glucose.GlucoseEntryViewModel;
 import com.davidrdz.vitallog.ui.pressure.PressureEntryViewModel;
 
@@ -42,6 +43,11 @@ public final class ViewModelFactory implements ViewModelProvider.Factory {
         if (modelClass == AgendaViewModel.class) {
             return modelClass.cast(new AgendaViewModel(app.getMedicationRepository(),
                     app.getAppointmentRepository(), app.getClock()));
+        }
+        if (modelClass == AlarmViewModel.class) {
+            return modelClass.cast(new AlarmViewModel(app.getMedicationRepository(),
+                    app.getAppointmentRepository(), app.getAlarmScheduler(),
+                    app.getReminderNotifier(), app.getClock()));
         }
         throw new IllegalArgumentException("Unknown ViewModel: " + modelClass.getName());
     }

@@ -9,13 +9,13 @@ import com.davidrdz.vitallog.R;
 import com.davidrdz.vitallog.data.entity.DoseUnit;
 
 /** Texto de cada {@link DoseUnit} según la cantidad: "1 tableta", "2 tabletas". */
-final class DoseUnitLabels {
+public final class DoseUnitLabels {
 
     private DoseUnitLabels() {
     }
 
     @NonNull
-    static String forAmount(@NonNull final Resources resources, @NonNull final DoseUnit unit,
+    public static String forAmount(@NonNull final Resources resources, @NonNull final DoseUnit unit,
                             final int amount) {
         return resources.getQuantityString(plural(unit), amount);
     }

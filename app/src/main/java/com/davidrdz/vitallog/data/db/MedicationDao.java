@@ -1,5 +1,6 @@
 package com.davidrdz.vitallog.data.db;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -19,6 +20,15 @@ public interface MedicationDao {
     /** Medicamentos activos, ordenados por la hora de la toma. */
     @Query("SELECT * FROM medications WHERE active = 1 ORDER BY hour, minute, name")
     LiveData<List<Medication>> observeActive();
+
+    /** Medicamentos activos (consulta síncrona para reprogramar alarmas fuera del hilo principal). */
+    @Query("SELECT * FROM medications WHERE active = 1")
+    List<Medication> getActive();
+
+    /** El medicamento si existe y está activo; null si no. Llamar fuera del hilo principal. */
+    @Nullable
+    @Query("SELECT * FROM medications WHERE id = :id AND active = 1")
+    Medication findActiveById(long id);
 
     /** Marca el medicamento como inactivo (borrado de la lista) sin perder sus tomas. */
     @Query("UPDATE medications SET active = 0 WHERE id = :id")
