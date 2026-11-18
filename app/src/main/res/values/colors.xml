@@ -32,4 +32,7 @@
     <color name="status_ok">#FF0B5A23</color>
     <color name="status_warning">#FF6B3E00</color>
     <color name="status_danger">#FF8A0F0F</color>
+
+    <!-- Retroalimentación de guardado: verde claro sólido con borde/check status_ok -->
+    <color name="surface_success">#FFE4F3E8</color>
 </resources>

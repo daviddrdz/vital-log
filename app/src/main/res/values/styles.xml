@@ -79,6 +79,64 @@
         <item name="iconSize">@dimen/icon_size</item>
     </style>
 
+    <!-- Botón principal "Guardar …": verde claro sólido, borde y check verde oscuro, ≥ 88dp. -->
+    <style name="Widget.VitalLog.Button.Save">
+        <item name="android:minHeight">@dimen/primary_button_height</item>
+        <item name="android:textSize">@dimen/text_action</item>
+        <item name="backgroundTint">@color/surface_success</item>
+        <item name="strokeColor">@color/status_ok</item>
+        <item name="iconTint">@color/status_ok</item>
+        <item name="icon">@drawable/ic_check</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <!-- "Agregar medicamento" / "Agregar cita": azul claro sólido con borde e icono azul oscuro. -->
+    <style name="Widget.VitalLog.Button.Add">
+        <item name="android:minHeight">@dimen/primary_button_height</item>
+        <item name="android:textSize">@dimen/text_action</item>
+        <item name="backgroundTint">@color/brand_primary_container</item>
+        <item name="strokeColor">@color/brand_primary</item>
+        <item name="iconTint">@color/brand_primary</item>
+        <item name="icon">@drawable/ic_add</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <!-- "Borrar" / "Sí, borrar": gris claro sólido con borde e icono rojo oscuro + texto. -->
+    <style name="Widget.VitalLog.Button.Delete">
+        <item name="backgroundTint">@color/surface_neutral</item>
+        <item name="strokeColor">@color/status_danger</item>
+        <item name="iconTint">@color/status_danger</item>
+        <item name="icon">@drawable/ic_delete</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <!-- Opción de una lista (unidad de la dosis). La elegida lleva check + fondo azul claro,
+         lo pinta MedicationFormActivity; TalkBack la anuncia como marcada (checkable). -->
+    <style name="Widget.VitalLog.Button.Choice">
+        <item name="android:checkable">true</item>
+        <item name="backgroundTint">@color/background</item>
+        <item name="strokeColor">@color/outline_strong</item>
+        <item name="iconTint">@color/brand_primary</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
+    <!-- Campo de texto (solo datos que no son signos vitales: nombre, médico o lugar). -->
+    <style name="Widget.VitalLog.TextField" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_outlined</item>
+        <item name="android:minHeight">@dimen/touch_target</item>
+        <item name="android:padding">@dimen/spacing_medium</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+    </style>
+
+    <!-- Mensaje de error junto a un campo: texto rojo oscuro sobre fondo blanco. -->
+    <style name="TextAppearance.VitalLog.Error" parent="TextAppearance.VitalLog.Body">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/status_danger</item>
+    </style>
+
     <style name="Widget.VitalLog.Button.Action.Glucose">
         <item name="backgroundTint">@color/action_glucose_bg</item>
         <item name="strokeColor">@color/action_glucose_fg</item>

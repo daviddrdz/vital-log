@@ -8,8 +8,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 /**
- * Evita que el contenido quede debajo de las barras del sistema cuando la app dibuja
- * de borde a borde: añade como padding el espacio que ocupan las barras.
+ * Evita que el contenido quede debajo de las barras del sistema (o del teclado, en los formularios)
+ * cuando la app dibuja de borde a borde: añade como padding el espacio que ocupan.
  */
 public final class SystemBarInsets {
 
@@ -24,7 +24,8 @@ public final class SystemBarInsets {
         final int initialBottom = view.getPaddingBottom();
         ViewCompat.setOnApplyWindowInsetsListener(view, (v, windowInsets) -> {
             final Insets bars = windowInsets.getInsets(
-                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout()
+                            | WindowInsetsCompat.Type.ime());
             v.setPadding(initialLeft + bars.left, initialTop + bars.top,
                     initialRight + bars.right, initialBottom + bars.bottom);
             return windowInsets;

@@ -4,6 +4,20 @@
     <!-- Comunes -->
     <string name="btn_back">Volver</string>
 
+    <!-- Horas y días como se dicen en voz alta (SpokenTimeFormatter, es-MX) -->
+    <string name="time_pattern">%1$d:%2$02d %3$s</string>
+    <string name="time_period_early_morning">de la madrugada</string>
+    <string name="time_period_morning">de la mañana</string>
+    <string name="time_period_noon">del mediodía</string>
+    <string name="time_period_afternoon">de la tarde</string>
+    <string name="time_period_night">de la noche</string>
+    <string name="day_today">hoy</string>
+    <string name="day_yesterday">ayer</string>
+    <string name="day_tomorrow">mañana</string>
+    <!-- Patrón de java.time: día de la semana, número y mes ("lunes 16 de noviembre") -->
+    <string name="date_pattern" translatable="false">EEEE d \'de\' MMMM</string>
+    <string name="join_pattern">%1$s, %2$s</string>
+
     <!-- Unidades: abreviatura visible junto al número y forma hablada para TalkBack -->
     <string name="unit_mg_dl">mg/dL</string>
     <string name="unit_mg_dl_spoken">miligramos por decilitro</string>
@@ -16,7 +30,7 @@
     <string name="stepper_at_max">Máximo</string>
     <string name="stepper_at_min">Mínimo</string>
     <string name="stepper_value">%1$d</string>
-    <string name="stepper_value_description">%1$s: %2$d %3$s</string>
+    <string name="stepper_value_description">%1$s: %2$s %3$s</string>
     <string name="stepper_increase_description">Subir el número de %1$s</string>
     <string name="stepper_decrease_description">Bajar el número de %1$s</string>
     <string name="stepper_at_max_description">%1$s está en el máximo. No puede subir más.</string>
@@ -40,7 +54,99 @@
     <string name="stepper_label_systolic">Presión alta (número de arriba)</string>
     <string name="stepper_label_diastolic">Presión baja (número de abajo)</string>
 
+    <!-- Guardado de signos vitales (banner de confirmación) -->
+    <string name="btn_save_glucose">Guardar azúcar</string>
+    <string name="btn_save_pressure">Guardar presión</string>
+    <string name="saved_glucose">Guardado: azúcar %1$d %2$s, %3$s</string>
+    <string name="saved_pressure">Guardado: presión %1$d/%2$d %3$s, %4$s</string>
+
     <!-- Pantalla: medicamentos y citas -->
     <string name="title_agenda">Mis medicamentos y citas</string>
-    <string name="body_agenda">Aquí vas a ver tus medicamentos y tus citas con el médico.</string>
+    <string name="body_agenda">Aquí ves tus medicamentos y tus citas con el médico. Para agregar uno nuevo, toca Agregar medicamento o Agregar cita.</string>
+    <string name="agenda_medications_title">Mis medicamentos</string>
+    <string name="agenda_medications_empty">Todavía no tienes medicamentos.</string>
+    <string name="agenda_appointments_title">Mis citas con el médico</string>
+    <string name="agenda_appointments_empty">No tienes citas próximas.</string>
+    <string name="btn_add_medication">Agregar medicamento</string>
+    <string name="btn_add_appointment">Agregar cita</string>
+    <string name="btn_delete">Borrar</string>
+    <string name="medication_dose_line">Dosis: %1$d %2$s</string>
+    <string name="medication_time_line">Hora: %1$s</string>
+    <string name="appointment_day_line">Día: %1$s</string>
+    <string name="appointment_time_line">Hora: %1$s</string>
+    <string name="delete_medication_description">Borrar %1$s</string>
+    <string name="delete_appointment_description">Borrar la cita: %1$s</string>
+
+    <!-- Confirmación de borrado: pregunta concreta + "Sí, borrar" / "No, conservar" -->
+    <string name="confirm_delete_medication_question">¿Borrar %1$s de tus medicamentos?</string>
+    <string name="confirm_delete_medication_detail">Ya no lo vas a ver en tu lista.</string>
+    <string name="confirm_delete_appointment_question">¿Borrar tu cita: %1$s?</string>
+    <string name="confirm_delete_appointment_detail">Fecha: %1$s. Ya no la vas a ver en tu lista.</string>
+    <string name="btn_confirm_delete">Sí, borrar</string>
+    <string name="btn_confirm_keep">No, conservar</string>
+    <string name="deleted_medication">Borraste %1$s de tus medicamentos.</string>
+    <string name="deleted_appointment">Borraste tu cita: %1$s.</string>
+
+    <!-- Hora en los formularios (dos controles: hora y minutos de 5 en 5) -->
+    <string name="stepper_label_hour">Hora</string>
+    <string name="stepper_label_minute">Minutos</string>
+    <string name="minute_value">%1$02d</string>
+    <string name="time_summary">Hora elegida: %1$s</string>
+
+    <!-- Formulario: medicamento -->
+    <string name="title_medication_form">Agregar medicamento</string>
+    <string name="body_medication_form">Escribe el nombre de tu medicamento y elige cuánto tomas y a qué hora.</string>
+    <string name="label_medication_name">Nombre del medicamento</string>
+    <string name="error_medication_name_missing">Escribe el nombre de tu medicamento para poder guardarlo.</string>
+    <string name="stepper_label_dose">Cantidad en cada toma</string>
+    <string name="label_dose_unit">¿Qué tomas?</string>
+    <string name="choice_tablet">Tabletas</string>
+    <string name="choice_capsule">Cápsulas</string>
+    <string name="choice_milliliter">Mililitros (ml)</string>
+    <string name="choice_unit">Unidades</string>
+    <string name="btn_save_medication">Guardar medicamento</string>
+    <string name="saved_medication">Guardado: %1$s, %2$d %3$s, %4$s</string>
+
+    <!-- Formulario: cita -->
+    <string name="title_appointment_form">Agregar cita</string>
+    <string name="body_appointment_form">Escribe con qué médico o en qué lugar es tu cita y elige el día y la hora.</string>
+    <string name="label_appointment_place">Médico o lugar de la cita</string>
+    <string name="error_appointment_place_missing">Escribe con qué médico o en qué lugar es tu cita para poder guardarla.</string>
+    <string name="stepper_label_days">¿Dentro de cuántos días es tu cita?</string>
+    <string name="appointment_date_summary">Fecha: %1$s</string>
+    <string name="error_appointment_time_passed">Esa hora ya pasó. Elige una hora más tarde u otro día.</string>
+    <string name="btn_save_appointment">Guardar cita</string>
+    <string name="saved_appointment">Cita guardada: %1$s, %2$s</string>
+
+    <!-- Palabras que cambian con la cantidad (1 tableta, 2 tabletas) -->
+    <plurals name="dose_unit_tablet">
+        <item quantity="one">tableta</item>
+        <item quantity="many">tabletas</item>
+        <item quantity="other">tabletas</item>
+    </plurals>
+    <plurals name="dose_unit_capsule">
+        <item quantity="one">cápsula</item>
+        <item quantity="many">cápsulas</item>
+        <item quantity="other">cápsulas</item>
+    </plurals>
+    <plurals name="dose_unit_milliliter">
+        <item quantity="one">mililitro</item>
+        <item quantity="many">mililitros</item>
+        <item quantity="other">mililitros</item>
+    </plurals>
+    <plurals name="dose_unit_unit">
+        <item quantity="one">unidad</item>
+        <item quantity="many">unidades</item>
+        <item quantity="other">unidades</item>
+    </plurals>
+    <plurals name="unit_days">
+        <item quantity="one">día</item>
+        <item quantity="many">días</item>
+        <item quantity="other">días</item>
+    </plurals>
+    <plurals name="unit_minutes">
+        <item quantity="one">minuto</item>
+        <item quantity="many">minutos</item>
+        <item quantity="other">minutos</item>
+    </plurals>
 </resources>
