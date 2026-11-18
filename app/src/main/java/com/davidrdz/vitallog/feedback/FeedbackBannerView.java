@@ -1,9 +1,12 @@
 package com.davidrdz.vitallog.feedback;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
-import android.util.AttributeSet;
 import android.content.res.ColorStateList;
+import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,9 +24,15 @@ import com.davidrdz.vitallog.R;
  * Banner grande de retroalimentación (CLAUDE.md §3.4): check + mensaje de lo que se guardó, o
  * triángulo de aviso + motivo por el que no se guardó. Fondo claro sólido (verde o rojo), borde e
  * icono oscuros; visible {@link FeedbackDurations#BANNER_VISIBLE_MS}.
- * El mensaje es una región "live" para que TalkBack lo lea al aparecer.
+ *
+ * <p>Entrada animada solo con escala (el banner crece un poco y el icono aparece con un rebote);
+ * nunca con transparencia, así el texto siempre se ve con su contraste final. Si el sistema tiene
+ * las animaciones desactivadas, aparece directamente. TalkBack lee el mismo mensaje al mostrarse.
  */
 public class FeedbackBannerView extends LinearLayout {
+
+    private static final float FULL_SCALE = 1f;
+    private static final float HIDDEN_SCALE = 0f;
 
     private final ImageView iconView;
     private final TextView messageText;
@@ -68,14 +77,61 @@ public class FeedbackBannerView extends LinearLayout {
 
     private void show(@NonNull final CharSequence message) {
         removeCallbacks(hide);
-        setVisibility(VISIBLE);
         messageText.setText(message);
+        setVisibility(VISIBLE);
+        if (ValueAnimator.areAnimatorsEnabled()) {
+            animateEntrance();
+        } else {
+            resetScale();
+        }
+        announce(message);
         postDelayed(hide, FeedbackDurations.BANNER_VISIBLE_MS);
+    }
+
+    /** El banner crece hasta su tamaño normal y después el icono aparece con un rebote. */
+    private void animateEntrance() {
+        animate().cancel();
+        iconView.animate().cancel();
+        setScaleX(FeedbackDurations.BANNER_START_SCALE);
+        setScaleY(FeedbackDurations.BANNER_START_SCALE);
+        iconView.setScaleX(HIDDEN_SCALE);
+        iconView.setScaleY(HIDDEN_SCALE);
+        animate().scaleX(FULL_SCALE).scaleY(FULL_SCALE)
+                .setDuration(FeedbackDurations.BANNER_ENTER_MS)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
+        iconView.animate().scaleX(FULL_SCALE).scaleY(FULL_SCALE)
+                .setStartDelay(FeedbackDurations.ICON_POP_DELAY_MS)
+                .setDuration(FeedbackDurations.ICON_POP_MS)
+                .setInterpolator(new OvershootInterpolator())
+                .start();
+    }
+
+    /** Sin animaciones del sistema: banner e icono aparecen ya en su tamaño final. */
+    private void resetScale() {
+        animate().cancel();
+        iconView.animate().cancel();
+        setScaleX(FULL_SCALE);
+        setScaleY(FULL_SCALE);
+        iconView.setScaleX(FULL_SCALE);
+        iconView.setScaleY(FULL_SCALE);
+    }
+
+    /**
+     * TalkBack lee el mensaje aunque sea idéntico al anterior (una región "live" no lo repetiría).
+     * {@code announceForAccessibility} está en desuso desde API 36, pero sigue funcionando y es la
+     * única forma de repetir el mismo aviso; el plan del Hito 6 la pide expresamente.
+     */
+    @SuppressWarnings("deprecation")
+    private void announce(@NonNull final CharSequence message) {
+        announceForAccessibility(message);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         removeCallbacks(hide);
+        animate().cancel();
+        iconView.animate().cancel();
         super.onDetachedFromWindow();
     }
 }

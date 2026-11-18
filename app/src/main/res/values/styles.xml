@@ -191,4 +191,11 @@
         <item name="iconTint">@color/action_agenda_fg</item>
         <item name="icon">@drawable/ic_medication</item>
     </style>
+
+    <style name="Widget.VitalLog.Button.Action.History">
+        <item name="backgroundTint">@color/action_history_bg</item>
+        <item name="strokeColor">@color/action_history_fg</item>
+        <item name="iconTint">@color/action_history_fg</item>
+        <item name="icon">@drawable/ic_history</item>
+    </style>
 </resources>

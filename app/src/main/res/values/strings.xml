@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">VitalLog</string>
 
     <!-- Comunes -->
@@ -42,6 +42,7 @@
     <string name="action_register_glucose">Registrar glucosa</string>
     <string name="action_register_pressure">Registrar presión arterial</string>
     <string name="action_agenda">Mis medicamentos y citas</string>
+    <string name="action_history">Ver mi historial</string>
 
     <!-- Pantalla: glucosa -->
     <string name="title_glucose_entry">Registrar glucosa</string>
@@ -201,4 +202,31 @@
     <string name="permission_exact_alarms_body">Así el aviso suena justo a la hora de tu medicamento. Toca \"Abrir ajustes\" y activa la opción de alarmas y recordatorios para VitalLog.</string>
     <string name="permission_full_screen_title">Permite el aviso en toda la pantalla</string>
     <string name="permission_full_screen_body">Así el recordatorio aparece en grande aunque tu teléfono esté bloqueado. Toca \"Abrir ajustes\" y activa esta opción para VitalLog.</string>
+
+    <!-- Pantalla: historial (solo lectura, para enseñarlo al médico) -->
+    <string name="title_history">Mi historial</string>
+    <string name="body_history">Elige cuántos días quieres ver. Puedes enseñarle esta pantalla a tu médico.</string>
+    <string name="history_period_7">Últimos 7 días</string>
+    <string name="history_period_30">Últimos 30 días</string>
+    <string name="history_summary_title_7">Resumen de los últimos 7 días</string>
+    <string name="history_summary_title_30">Resumen de los últimos 30 días</string>
+    <string name="history_summary_glucose_title">Azúcar en la sangre (glucosa)</string>
+    <string name="history_summary_glucose">Promedio: %1$d %4$s\nMás baja: %2$d %4$s\nMás alta: %3$d %4$s</string>
+    <string name="history_summary_pressure_title">Presión arterial</string>
+    <string name="history_summary_pressure">Promedio: %1$d/%2$d %7$s\nNúmero de arriba: entre %3$d y %4$d\nNúmero de abajo: entre %5$d y %6$d</string>
+    <string name="history_summary_doses_title">Medicamentos</string>
+    <string name="history_summary_doses">Tomas registradas: %1$d</string>
+    <string name="history_no_readings">Sin datos en estos días.</string>
+    <string name="history_no_doses">Sin tomas registradas en estos días.</string>
+    <string name="history_list_title">Día por día</string>
+    <string name="history_empty">No hay registros en estos días. Cuando guardes tu azúcar, tu presión o una toma de medicamento, aparecerán aquí.</string>
+    <string name="history_type_glucose">Azúcar en la sangre (glucosa)</string>
+    <string name="history_type_pressure">Presión arterial</string>
+    <string name="history_type_dose">Medicamento tomado</string>
+    <string name="history_value_glucose">%1$d %2$s</string>
+    <string name="history_value_pressure">%1$d/%2$d %3$s</string>
+    <!-- "sobre" separa los dos números de la presión; no es un plural -->
+    <string name="history_value_pressure_spoken" tools:ignore="PluralsCandidate">%1$d sobre %2$d %3$s</string>
+    <string name="history_value_dose">%1$s: %2$d %3$s</string>
+    <string name="history_time_line">Hora: %1$s</string>
 </resources>

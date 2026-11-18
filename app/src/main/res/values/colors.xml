@@ -27,6 +27,8 @@
     <color name="action_pressure_fg">#FF8A0F0F</color>
     <color name="action_agenda_bg">#FFE4F3E8</color>
     <color name="action_agenda_fg">#FF0B5A23</color>
+    <color name="action_history_bg">#FFF1EAFA</color>
+    <color name="action_history_fg">#FF4A1D7A</color>
 
     <!-- Estados de lectura (siempre acompañados de texto, nunca solo color) -->
     <color name="status_ok">#FF0B5A23</color>

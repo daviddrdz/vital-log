@@ -24,7 +24,7 @@ public final class SaveFeedback {
     @NonNull
     public static SaveFeedback attach(@NonNull final LifecycleOwner owner,
                                       @NonNull final FeedbackBannerView banner) {
-        return new SaveFeedback(banner, FeedbackTonePlayer.attach(owner));
+        return new SaveFeedback(banner, FeedbackTonePlayer.attach(banner.getContext(), owner));
     }
 
     /** Banner con el mensaje de lo guardado + tono de éxito. */

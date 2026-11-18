@@ -2,6 +2,7 @@
 <!--
     Contenido de FeedbackBannerView (LinearLayout horizontal con fondo claro sólido y borde oscuro).
     El check es decorativo: el mensaje ya dice qué se guardó, así que TalkBack solo lee el texto.
+    El mensaje no es región "live": FeedbackBannerView lo anuncia al mostrarse (evita leerlo dos veces).
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,7 +24,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_medium"
         android:layout_weight="1"
-        android:accessibilityLiveRegion="polite"
         android:textAppearance="@style/TextAppearance.VitalLog.Label"
         tools:text="@string/saved_glucose" />
 </merge>

@@ -17,6 +17,7 @@ import com.davidrdz.vitallog.feedback.FeedbackTonePlayer;
 import com.davidrdz.vitallog.ui.common.BaseScreenActivity;
 import com.davidrdz.vitallog.ui.common.SpokenTimeFormatter;
 import com.davidrdz.vitallog.ui.common.ViewModelFactory;
+import com.davidrdz.vitallog.ui.widget.ChoiceButtonStyle;
 import com.davidrdz.vitallog.ui.widget.NumericStepperView;
 import com.google.android.material.button.MaterialButton;
 
@@ -53,7 +54,7 @@ public class MedicationFormActivity extends BaseScreenActivity {
                     savedInstanceState.getString(STATE_DOSE_UNIT, DEFAULT_UNIT.name()));
         }
         formatter = VitalLogApp.from(this).getTimeFormatter();
-        tones = FeedbackTonePlayer.attach(this);
+        tones = FeedbackTonePlayer.attach(this, this);
         nameField = findViewById(R.id.edit_medication_name);
         nameError = findViewById(R.id.txt_name_error);
 
@@ -97,17 +98,8 @@ public class MedicationFormActivity extends BaseScreenActivity {
 
     /** La opción elegida lleva check, borde grueso y fondo azul claro; las demás, fondo blanco. */
     private void renderUnitButtons() {
-        final int normalStroke = getResources().getDimensionPixelSize(R.dimen.stroke_strong);
-        final int selectedStroke = getResources().getDimensionPixelSize(R.dimen.stroke_selected);
         for (final Map.Entry<DoseUnit, MaterialButton> entry : unitButtons.entrySet()) {
-            final boolean selected = entry.getKey() == selectedUnit;
-            final MaterialButton button = entry.getValue();
-            button.setChecked(selected);
-            button.setIconResource(selected ? R.drawable.ic_check : 0);
-            button.setStrokeWidth(selected ? selectedStroke : normalStroke);
-            button.setStrokeColorResource(selected ? R.color.brand_primary : R.color.outline_strong);
-            button.setBackgroundTintList(getColorStateList(
-                    selected ? R.color.brand_primary_container : R.color.background));
+            ChoiceButtonStyle.render(entry.getValue(), entry.getKey() == selectedUnit);
         }
     }
 

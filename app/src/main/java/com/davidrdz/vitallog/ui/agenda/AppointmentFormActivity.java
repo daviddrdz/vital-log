@@ -47,7 +47,7 @@ public class AppointmentFormActivity extends BaseScreenActivity {
         super.onCreate(savedInstanceState);
         viewModel = ViewModelFactory.get(this, AgendaViewModel.class);
         formatter = VitalLogApp.from(this).getTimeFormatter();
-        tones = FeedbackTonePlayer.attach(this);
+        tones = FeedbackTonePlayer.attach(this, this);
         placeField = findViewById(R.id.edit_appointment_place);
         placeError = findViewById(R.id.txt_name_error);
         timeError = findViewById(R.id.txt_time_error);
