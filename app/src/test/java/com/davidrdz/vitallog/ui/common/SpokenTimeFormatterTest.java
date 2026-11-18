@@ -125,6 +125,35 @@ public class SpokenTimeFormatterTest {
                 FORMATTER.formatDateTime(millis(2026, 11, 13, 19, 15), NOW));
     }
 
+    // ===== Encabezados por día (historial) =====
+
+    @Test
+    public void dayHeading_today_isCapitalizedWithDate() {
+        assertEquals("Hoy, martes 17 de noviembre",
+                FORMATTER.formatDayHeading(millis(2026, 11, 17, 8, 30), NOW));
+    }
+
+    @Test
+    public void dayHeading_yesterday_isCapitalizedWithDate() {
+        assertEquals("Ayer, lunes 16 de noviembre",
+                FORMATTER.formatDayHeading(millis(2026, 11, 16, 23, 55), NOW));
+    }
+
+    @Test
+    public void dayHeading_olderDay_capitalizesWeekday() {
+        assertEquals("Viernes 13 de noviembre",
+                FORMATTER.formatDayHeading(millis(2026, 11, 13, 9, 0), NOW));
+        assertEquals("Lunes 19 de octubre",
+                FORMATTER.formatDayHeading(millis(2026, 10, 19, 0, 0), NOW));
+    }
+
+    @Test
+    public void dayHeading_usesCalendarDayAfterMidnight() {
+        final long justAfterMidnight = millis(2026, 11, 17, 0, 1);
+        assertEquals("Ayer, lunes 16 de noviembre",
+                FORMATTER.formatDayHeading(millis(2026, 11, 16, 23, 59), justAfterMidnight));
+    }
+
     @Test
     public void dayWithDate_addsDateToRelativeDay() {
         assertEquals("mañana, miércoles 18 de noviembre",

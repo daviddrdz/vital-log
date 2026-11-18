@@ -12,6 +12,7 @@ import com.davidrdz.vitallog.data.db.MedicationDao;
 import com.davidrdz.vitallog.data.entity.DoseLog;
 import com.davidrdz.vitallog.data.entity.DoseUnit;
 import com.davidrdz.vitallog.data.entity.Medication;
+import com.davidrdz.vitallog.data.entity.TakenDose;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -172,6 +173,11 @@ public class MedicationRepositoryTest {
         @Override
         public LiveData<List<DoseLog>> observeTakenBetween(final long startInclusive,
                                                            final long endExclusive) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public LiveData<List<TakenDose>> observeTakenSince(final long startInclusive) {
             throw new UnsupportedOperationException();
         }
     }

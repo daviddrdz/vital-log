@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Dashboard principal: navegación 100% plana (CLAUDE.md §3.2).
-    Tres acciones masivas a todo lo ancho; ScrollView para que funcione con escala de fuente 2.0×.
+    Cuatro acciones masivas a todo lo ancho; ScrollView para que funcione con escala de fuente 2.0×.
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -61,5 +61,14 @@
             android:layout_marginTop="@dimen/spacing_large"
             android:minHeight="@dimen/action_button_height"
             android:text="@string/action_agenda" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_history"
+            style="@style/Widget.VitalLog.Button.Action.History"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:minHeight="@dimen/action_button_height"
+            android:text="@string/action_history" />
     </LinearLayout>
 </ScrollView>

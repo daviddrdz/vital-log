@@ -6,6 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.davidrdz.vitallog.data.entity.DoseLog;
+import com.davidrdz.vitallog.data.entity.TakenDose;
 
 import java.util.List;
 
@@ -23,4 +24,13 @@ public interface DoseLogDao {
     @Query("SELECT * FROM dose_logs WHERE taken_at >= :startInclusive AND taken_at < :endExclusive"
             + " ORDER BY taken_at, id")
     LiveData<List<DoseLog>> observeTakenBetween(long startInclusive, long endExclusive);
+
+    /**
+     * Tomas desde {@code startInclusive} con el nombre y la dosis del medicamento (aunque ya esté
+     * borrado de la lista), de la más reciente a la más antigua.
+     */
+    @Query("SELECT d.id, d.taken_at, m.name, m.dose_amount, m.dose_unit"
+            + " FROM dose_logs d INNER JOIN medications m ON m.id = d.medication_id"
+            + " WHERE d.taken_at >= :startInclusive ORDER BY d.taken_at DESC, d.id DESC")
+    LiveData<List<TakenDose>> observeTakenSince(long startInclusive);
 }

@@ -186,6 +186,11 @@ public class VitalsRepositoryTest {
         }
 
         @Override
+        public LiveData<List<GlucoseReading>> observeSince(final long startInclusive) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public LiveData<GlucoseReading> observeLatest() {
             return latest;
         }
@@ -204,6 +209,11 @@ public class VitalsRepositoryTest {
 
         @Override
         public LiveData<List<BloodPressureReading>> observeAll() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public LiveData<List<BloodPressureReading>> observeSince(final long startInclusive) {
             throw new UnsupportedOperationException();
         }
 

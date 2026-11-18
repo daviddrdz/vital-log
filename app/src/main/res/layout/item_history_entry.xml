@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fila del historial (solo lectura, no se puede tocar): tipo en palabras con su icono, valor con
+    unidad, hora y, en lecturas, la categoría con icono + texto + color (nunca solo color).
+    Los iconos son decorativos: el texto ya lo dice todo. TalkBack lee la tarjeta completa de una vez.
+    Icono + texto van en ImageView aparte (no compound drawable) para que el icono mida 32dp y escale
+    junto al texto grande; por eso se ignora UseCompoundDrawables.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_history_entry"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_touch"
+    android:background="@drawable/bg_outlined"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_medium"
+    android:screenReaderFocusable="true"
+    tools:targetApi="p">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/img_history_type"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:importantForAccessibility="no"
+            tools:src="@drawable/ic_glucose_drop" />
+
+        <TextView
+            android:id="@+id/txt_history_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_touch"
+            android:layout_weight="1"
+            android:textAppearance="@style/TextAppearance.VitalLog.Body"
+            tools:text="@string/history_type_glucose" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt_history_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_touch"
+        android:textAppearance="@style/TextAppearance.VitalLog.Label"
+        tools:text="120 mg/dL" />
+
+    <TextView
+        android:id="@+id/txt_history_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_touch"
+        android:textAppearance="@style/TextAppearance.VitalLog.Body"
+        tools:text="Hora: 8:30 de la mañana" />
+
+    <LinearLayout
+        android:id="@+id/row_history_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_touch"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/img_history_category"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:importantForAccessibility="no"
+            tools:src="@drawable/ic_check_circle" />
+
+        <TextView
+            android:id="@+id/txt_history_category"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_touch"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:textAppearance="@style/TextAppearance.VitalLog.Body"
+            tools:text="@string/category_glucose_normal" />
+    </LinearLayout>
+</LinearLayout>

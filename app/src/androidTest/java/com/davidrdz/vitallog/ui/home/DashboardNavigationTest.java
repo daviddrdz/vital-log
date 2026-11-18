@@ -36,7 +36,8 @@ public class DashboardNavigationTest {
     @Test
     public void actionButtons_areVisibleAndLargeEnough() {
         for (final int id : new int[]{
-                R.id.btn_register_glucose, R.id.btn_register_pressure, R.id.btn_agenda}) {
+                R.id.btn_register_glucose, R.id.btn_register_pressure, R.id.btn_agenda,
+                R.id.btn_history}) {
             onView(withId(id)).perform(scrollTo()).check(matches(isDisplayed()));
             onView(withId(id)).check(hasMinimumTouchSize());
         }
@@ -55,6 +56,11 @@ public class DashboardNavigationTest {
     @Test
     public void agendaButton_opensAgendaScreen_andBackReturns() {
         assertOpensAndReturns(R.id.btn_agenda, R.string.title_agenda);
+    }
+
+    @Test
+    public void historyButton_opensHistoryScreen_andBackReturns() {
+        assertOpensAndReturns(R.id.btn_history, R.string.title_history);
     }
 
     private void assertOpensAndReturns(@IdRes final int buttonId, @StringRes final int title) {

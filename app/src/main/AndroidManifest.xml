@@ -45,6 +45,11 @@
             android:exported="false"
             android:label="@string/title_agenda" />
 
+        <activity
+            android:name=".ui.history.HistoryActivity"
+            android:exported="false"
+            android:label="@string/title_history" />
+
         <!-- Formularios de la agenda: un paso de la tarea que siempre regresa a la agenda. -->
         <activity
             android:name=".ui.agenda.MedicationFormActivity"

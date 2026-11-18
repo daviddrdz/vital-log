@@ -12,10 +12,11 @@ import com.davidrdz.vitallog.R;
 import com.davidrdz.vitallog.ui.agenda.AgendaActivity;
 import com.davidrdz.vitallog.ui.common.SystemBarInsets;
 import com.davidrdz.vitallog.ui.glucose.GlucoseEntryActivity;
+import com.davidrdz.vitallog.ui.history.HistoryActivity;
 import com.davidrdz.vitallog.ui.pressure.PressureEntryActivity;
 
 /**
- * Dashboard principal: tres acciones masivas que llevan directo a cada pantalla
+ * Dashboard principal: cuatro acciones masivas que llevan directo a cada pantalla
  * (un solo nivel de profundidad, CLAUDE.md §3.2).
  */
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         openOnClick(R.id.btn_register_glucose, GlucoseEntryActivity.class);
         openOnClick(R.id.btn_register_pressure, PressureEntryActivity.class);
         openOnClick(R.id.btn_agenda, AgendaActivity.class);
+        openOnClick(R.id.btn_history, HistoryActivity.class);
     }
 
     private void openOnClick(@IdRes final int buttonId, final Class<?> destination) {

@@ -145,6 +145,16 @@ public final class SpokenTimeFormatter {
         return relative == null ? date : String.format(LOCALE, labels.joinPattern, relative, date);
     }
 
+    /**
+     * Encabezado de un día en el historial, con mayúscula inicial: "Hoy, martes 17 de noviembre",
+     * "Ayer, lunes 16 de noviembre" o "Viernes 13 de noviembre".
+     */
+    @NonNull
+    public String formatDayHeading(final long epochMillis, final long nowMillis) {
+        final String text = formatDayWithDate(epochMillis, nowMillis);
+        return text.substring(0, 1).toUpperCase(LOCALE) + text.substring(1);
+    }
+
     /** "hoy, 8:30 de la mañana" o "lunes 16 de noviembre, 8:30 de la mañana". */
     @NonNull
     public String formatDateTime(final long epochMillis, final long nowMillis) {

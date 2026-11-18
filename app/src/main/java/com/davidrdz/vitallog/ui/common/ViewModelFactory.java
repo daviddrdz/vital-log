@@ -9,6 +9,7 @@ import com.davidrdz.vitallog.VitalLogApp;
 import com.davidrdz.vitallog.ui.agenda.AgendaViewModel;
 import com.davidrdz.vitallog.ui.alarm.AlarmViewModel;
 import com.davidrdz.vitallog.ui.glucose.GlucoseEntryViewModel;
+import com.davidrdz.vitallog.ui.history.HistoryViewModel;
 import com.davidrdz.vitallog.ui.pressure.PressureEntryViewModel;
 
 /** Crea los ViewModels con los repositorios de {@link VitalLogApp}. */
@@ -48,6 +49,10 @@ public final class ViewModelFactory implements ViewModelProvider.Factory {
             return modelClass.cast(new AlarmViewModel(app.getMedicationRepository(),
                     app.getAppointmentRepository(), app.getAlarmScheduler(),
                     app.getReminderNotifier(), app.getClock()));
+        }
+        if (modelClass == HistoryViewModel.class) {
+            return modelClass.cast(new HistoryViewModel(app.getVitalsRepository(),
+                    app.getMedicationRepository(), app.getClock()));
         }
         throw new IllegalArgumentException("Unknown ViewModel: " + modelClass.getName());
     }

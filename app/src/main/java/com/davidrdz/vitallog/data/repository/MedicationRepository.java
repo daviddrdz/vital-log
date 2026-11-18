@@ -9,6 +9,7 @@ import com.davidrdz.vitallog.data.db.DoseLogDao;
 import com.davidrdz.vitallog.data.db.MedicationDao;
 import com.davidrdz.vitallog.data.entity.DoseLog;
 import com.davidrdz.vitallog.data.entity.Medication;
+import com.davidrdz.vitallog.data.entity.TakenDose;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -82,5 +83,11 @@ public final class MedicationRepository {
     @NonNull
     public LiveData<List<Medication>> observeActive() {
         return medicationDao.observeActive();
+    }
+
+    /** Tomas registradas desde {@code startInclusive}, con su medicamento, de la más reciente. */
+    @NonNull
+    public LiveData<List<TakenDose>> observeTakenDosesSince(final long startInclusive) {
+        return doseLogDao.observeTakenSince(startInclusive);
     }
 }

@@ -10,6 +10,8 @@ import com.davidrdz.vitallog.data.db.GlucoseReadingDao;
 import com.davidrdz.vitallog.data.entity.BloodPressureReading;
 import com.davidrdz.vitallog.data.entity.GlucoseReading;
 
+import java.util.List;
+
 /**
  * Único punto de acceso a las lecturas de glucosa y presión arterial desde la UI.
  * Valida cada lectura con {@link ClinicalRangeValidator} antes de guardarla: una lectura imposible
@@ -66,5 +68,18 @@ public final class VitalsRepository {
     @NonNull
     public LiveData<BloodPressureReading> observeLatestBloodPressure() {
         return pressureDao.observeLatest();
+    }
+
+    /** Lecturas de glucosa desde {@code startInclusive}, de la más reciente a la más antigua. */
+    @NonNull
+    public LiveData<List<GlucoseReading>> observeGlucoseSince(final long startInclusive) {
+        return glucoseDao.observeSince(startInclusive);
+    }
+
+    /** Lecturas de presión desde {@code startInclusive}, de la más reciente a la más antigua. */
+    @NonNull
+    public LiveData<List<BloodPressureReading>> observeBloodPressureSince(
+            final long startInclusive) {
+        return pressureDao.observeSince(startInclusive);
     }
 }

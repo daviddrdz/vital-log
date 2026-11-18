@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Encabezado de un día en el historial ("Hoy, martes 17 de noviembre"). TalkBack lo anuncia como título. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/txt_history_day"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/spacing_large"
+    android:layout_marginBottom="@dimen/spacing_touch"
+    android:accessibilityHeading="true"
+    android:textAppearance="@style/TextAppearance.VitalLog.Title"
+    tools:targetApi="p"
+    tools:text="Hoy, martes 17 de noviembre" />

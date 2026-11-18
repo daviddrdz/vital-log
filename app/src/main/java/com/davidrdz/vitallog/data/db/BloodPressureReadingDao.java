@@ -20,6 +20,11 @@ public interface BloodPressureReadingDao {
     @Query("SELECT * FROM blood_pressure_readings ORDER BY taken_at DESC, id DESC")
     LiveData<List<BloodPressureReading>> observeAll();
 
+    /** Lecturas desde {@code startInclusive} (epoch millis), de la más reciente a la más antigua. */
+    @Query("SELECT * FROM blood_pressure_readings WHERE taken_at >= :startInclusive"
+            + " ORDER BY taken_at DESC, id DESC")
+    LiveData<List<BloodPressureReading>> observeSince(long startInclusive);
+
     /** La lectura más reciente, o {@code null} si no hay ninguna. */
     @Query("SELECT * FROM blood_pressure_readings ORDER BY taken_at DESC, id DESC LIMIT 1")
     LiveData<BloodPressureReading> observeLatest();

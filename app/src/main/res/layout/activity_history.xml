@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    "Mi historial": solo lectura y sin gestos (CLAUDE.md §3.2). Dos botones de periodo (filtros,
+    no pestañas), resumen y lista agrupada por día. La lista es un RecyclerView sin scroll propio
+    dentro del NestedScrollView, así todo se desplaza junto y funciona con escala de fuente 2.0×.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/screen_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.history.HistoryActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
+
+            <include layout="@layout/view_screen_header" />
+
+            <TextView
+                android:id="@+id/txt_history_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_medium"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/body_history"
+                android:textAppearance="@style/TextAppearance.VitalLog.Body" />
+
+            <!-- Periodo: dos opciones a todo lo ancho; la elegida lleva check y fondo azul claro -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_period_7"
+                style="@style/Widget.VitalLog.Button.Choice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:minWidth="@dimen/touch_target"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/history_period_7" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_period_30"
+                style="@style/Widget.VitalLog.Button.Choice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:minWidth="@dimen/touch_target"
+                android:minHeight="@dimen/touch_target"
+                android:text="@string/history_period_30" />
+
+            <!-- Resumen del periodo -->
+            <TextView
+                android:id="@+id/txt_summary_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:accessibilityHeading="true"
+                android:textAppearance="@style/TextAppearance.VitalLog.Title"
+                tools:targetApi="p"
+                tools:text="@string/history_summary_title_7" />
+
+            <LinearLayout
+                android:id="@+id/card_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:background="@drawable/bg_outlined"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_medium">
+
+                <TextView
+                    android:id="@+id/txt_summary_glucose_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/history_summary_glucose_title"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+
+                <TextView
+                    android:id="@+id/txt_summary_glucose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_touch"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Body"
+                    tools:text="@string/history_no_readings" />
+
+                <TextView
+                    android:id="@+id/txt_summary_pressure_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_large"
+                    android:text="@string/history_summary_pressure_title"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+
+                <TextView
+                    android:id="@+id/txt_summary_pressure"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_touch"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Body"
+                    tools:text="@string/history_no_readings" />
+
+                <TextView
+                    android:id="@+id/txt_summary_doses_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_large"
+                    android:text="@string/history_summary_doses_title"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Label" />
+
+                <TextView
+                    android:id="@+id/txt_summary_doses"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_touch"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textAppearance="@style/TextAppearance.VitalLog.Body"
+                    tools:text="@string/history_no_doses" />
+            </LinearLayout>
+
+            <!-- Lista día por día -->
+            <TextView
+                android:id="@+id/txt_history_list_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:accessibilityHeading="true"
+                android:text="@string/history_list_title"
+                android:textAppearance="@style/TextAppearance.VitalLog.Title"
+                tools:targetApi="p" />
+
+            <TextView
+                android:id="@+id/txt_history_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_touch"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/history_empty"
+                android:textAppearance="@style/TextAppearance.VitalLog.Body"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_history_entry" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
