@@ -29,12 +29,35 @@ import com.google.android.material.button.MaterialButton;
  *
  * <p>El rótulo se declara en XML con {@code app:stepperLabel}; límites, valor inicial y unidad se
  * configuran desde Java con {@link #bind(VitalRange)}, de modo que coinciden con
- * {@link com.davidrdz.vitallog.analytics.VitalRanges}. El valor se conserva al rotar la pantalla.
+ * {@link com.davidrdz.vitallog.analytics.VitalRanges}. Para datos que no son signos vitales
+ * (dosis, hora, días) se usa {@link #bind(int, int, int, int, ValueFormatter)}. El valor se
+ * conserva al rotar la pantalla.
  */
 public class NumericStepperView extends LinearLayout {
 
+    /** Texto visible y hablado del número y su unidad. */
+    public interface ValueFormatter {
+        /** Número grande, p. ej. "120" o "8". */
+        @NonNull
+        CharSequence formatValue(int value);
+
+        /** Unidad bajo el número, p. ej. "mg/dL" o "de la mañana". */
+        @NonNull
+        CharSequence formatUnit(int value);
+
+        /** Unidad como la lee TalkBack, p. ej. "miligramos por decilitro". */
+        @NonNull
+        CharSequence formatSpokenUnit(int value);
+    }
+
+    /** Avisa cada vez que cambia el número (toque, pulsación continua o restauración). */
+    public interface OnValueChangeListener {
+        void onValueChanged(int value);
+    }
+
     private static final int DIRECTION_UP = 1;
     private static final int DIRECTION_DOWN = -1;
+    private static final int DEFAULT_STEP_SIZE = 1;
 
     private final TextView valueText;
     private final TextView unitText;
@@ -48,7 +71,11 @@ public class NumericStepperView extends LinearLayout {
     @Nullable
     private StepperModel model;
     @Nullable
-    private VitalUnit unit;
+    private ValueFormatter formatter;
+    @Nullable
+    private OnValueChangeListener valueChangeListener;
+    /** Cuánto cambia el número en cada paso de {@link AccelerationPolicy} (p. ej. 5 minutos). */
+    private int stepSize = DEFAULT_STEP_SIZE;
     /** Valor restaurado antes de {@link #bind(VitalRange)}; se aplica al enlazar. */
     @Nullable
     private Integer pendingRestoredValue;
@@ -85,15 +112,57 @@ public class NumericStepperView extends LinearLayout {
         addValueAccessibilityActions();
     }
 
-    /** Fija límites, unidad y valor inicial (el típico del rango) del control. */
+    /** Fija límites, unidad y valor inicial (el típico del rango) de un signo vital. */
     public void bind(@NonNull final VitalRange range) {
-        final int initial = pendingRestoredValue != null
-                ? pendingRestoredValue : range.getTypical();
+        bind(range.getMin(), range.getMax(), range.getTypical(), DEFAULT_STEP_SIZE,
+                new VitalUnitFormatter(range.getUnit()));
+    }
+
+    /**
+     * Configura el control para un dato que no es un signo vital.
+     *
+     * @param stepSize cuánto cambia el número por paso (p. ej. 5 para minutos de 5 en 5).
+     */
+    public void bind(final int min, final int max, final int initial, final int stepSize,
+                     @NonNull final ValueFormatter valueFormatter) {
+        if (stepSize <= 0) {
+            throw new IllegalArgumentException("stepSize must be positive");
+        }
+        final int start = pendingRestoredValue != null ? pendingRestoredValue : initial;
         pendingRestoredValue = null;
-        model = new StepperModel(range.getMin(), range.getMax(), initial);
-        unit = range.getUnit();
-        unitText.setText(unitShortLabel(unit));
+        model = new StepperModel(min, max, start);
+        this.stepSize = stepSize;
+        formatter = valueFormatter;
         render();
+    }
+
+    /** Valor actual; llamar después de {@code bind}. */
+    public int getValue() {
+        return requireModel().getValue();
+    }
+
+    /** Fija el valor (ajustado al rango), p. ej. la última lectura guardada. */
+    public void setValue(final int value) {
+        if (requireModel().setValue(value)) {
+            onValueChanged();
+        }
+    }
+
+    public void setOnValueChangeListener(@Nullable final OnValueChangeListener listener) {
+        valueChangeListener = listener;
+    }
+
+    /** Vuelve a pintar número y unidad, p. ej. si el formateador depende de otro control. */
+    public void refresh() {
+        render();
+    }
+
+    @NonNull
+    private StepperModel requireModel() {
+        if (model == null) {
+            throw new IllegalStateException("bind() must be called first");
+        }
+        return model;
     }
 
     private RepeatTouchListener wireButton(final MaterialButton button, final int direction) {
@@ -132,22 +201,31 @@ public class NumericStepperView extends LinearLayout {
         if (model == null) {
             return;
         }
+        final int delta = amount * stepSize;
         final boolean changed = direction == DIRECTION_UP
-                ? model.increment(amount) : model.decrement(amount);
+                ? model.increment(delta) : model.decrement(delta);
         if (changed) {
-            render();
+            onValueChanged();
+        }
+    }
+
+    private void onValueChanged() {
+        render();
+        if (valueChangeListener != null && model != null) {
+            valueChangeListener.onValueChanged(model.getValue());
         }
     }
 
     private void render() {
-        if (model == null || unit == null) {
+        if (model == null || formatter == null) {
             return;
         }
         final int value = model.getValue();
-        valueText.setText(getResources().getString(R.string.stepper_value, value));
+        valueText.setText(formatter.formatValue(value));
+        unitText.setText(formatter.formatUnit(value));
         valueText.setContentDescription(getResources().getString(
-                R.string.stepper_value_description, label, value,
-                getResources().getString(unitSpokenLabel(unit))));
+                R.string.stepper_value_description, label, formatter.formatValue(value),
+                formatter.formatSpokenUnit(value)));
 
         renderButton(increaseButton, model.isAtMax(), R.string.stepper_increase,
                 R.string.stepper_at_max, R.string.stepper_increase_description,
@@ -179,27 +257,32 @@ public class NumericStepperView extends LinearLayout {
         return ColorStateList.valueOf(ContextCompat.getColor(getContext(), color));
     }
 
-    @StringRes
-    private static int unitShortLabel(@NonNull final VitalUnit unit) {
-        switch (unit) {
-            case MG_PER_DL:
-                return R.string.unit_mg_dl;
-            case MMHG:
-                return R.string.unit_mmhg;
-            default:
-                throw new IllegalArgumentException("Unknown unit: " + unit);
-        }
-    }
+    /** Formateador de los signos vitales: número entero y unidad fija (mg/dL, mmHg). */
+    private final class VitalUnitFormatter implements ValueFormatter {
 
-    @StringRes
-    private static int unitSpokenLabel(@NonNull final VitalUnit unit) {
-        switch (unit) {
-            case MG_PER_DL:
-                return R.string.unit_mg_dl_spoken;
-            case MMHG:
-                return R.string.unit_mmhg_spoken;
-            default:
-                throw new IllegalArgumentException("Unknown unit: " + unit);
+        @NonNull
+        private final VitalUnit unit;
+
+        VitalUnitFormatter(@NonNull final VitalUnit unit) {
+            this.unit = unit;
+        }
+
+        @NonNull
+        @Override
+        public CharSequence formatValue(final int value) {
+            return getResources().getString(R.string.stepper_value, value);
+        }
+
+        @NonNull
+        @Override
+        public CharSequence formatUnit(final int value) {
+            return getResources().getString(VitalUnitLabels.shortLabel(unit));
+        }
+
+        @NonNull
+        @Override
+        public CharSequence formatSpokenUnit(final int value) {
+            return getResources().getString(VitalUnitLabels.spokenLabel(unit));
         }
     }
 
@@ -245,7 +328,7 @@ public class NumericStepperView extends LinearLayout {
         if (model == null) {
             pendingRestoredValue = saved.value;
         } else if (model.setValue(saved.value)) {
-            render();
+            onValueChanged();
         }
     }
 
