@@ -3,7 +3,7 @@
 Fuente de verdad del proyecto. Toda decisión de código, UI o arquitectura debe respetar este documento. Si una petición lo contradice, se señala el conflicto antes de implementar.
 
 **Plan de trabajo:** @docs/IMPLEMENTATION_PLAN.md (6 hitos; detalle de archivos y pruebas por hito).
-**Estado actual:** Hito 1 completo → siguiente: Hito 2 (control numérico visual). Actualizar esta línea al cerrar cada hito.
+**Estado actual:** Hito 3 completo → siguiente: Hito 4 (gestor analítico de validación). Actualizar esta línea al cerrar cada hito.
 
 ## 1. Contexto del producto
 
@@ -83,6 +83,8 @@ com.davidrdz.vitallog
 
 ### 4.1 Capa de Persistencia Local (Room)
 - Una sola `AppDatabase` (singleton). Entidades con timestamp (`long` epoch millis).
+- Entidades (esquema v1, exportado en `app/schemas/`): `GlucoseReading`, `BloodPressureReading`, `Medication` (nombre, dosis + `DoseUnit`, hora diaria), `DoseLog` (FK `RESTRICT` a `Medication`) y `Appointment` (médico o lugar + fecha/hora de la cita).
+- Borrar un medicamento o una cita lo marca `active = false` (no se elimina la fila) para conservar el historial clínico.
 - **Nunca** `allowMainThreadQueries()`. Escrituras en un `ExecutorService` compartido; lecturas observables vía `LiveData`.
 - Las migraciones de esquema se escriben explícitamente; no usar `fallbackToDestructiveMigration()` (perdería datos clínicos del usuario).
 - La UI nunca accede a DAOs directamente: siempre a través del repositorio.
